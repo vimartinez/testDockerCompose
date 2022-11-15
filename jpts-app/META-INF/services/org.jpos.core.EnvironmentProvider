@@ -1,0 +1,2 @@
+org.jpos.configmap.ConfigmapEnvironmentProvider
+org.jpos.configmap.SecretEnvironmentProvider

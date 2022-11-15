@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2022-11-10T09:45:26.437562" lifespan="2ms">
+  <info>
+    Q2 started, deployDir=/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy, environment=default
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:27.010513" lifespan="561ms">
+  <version>
+    jPOS 2.1.8-SNAPSHOT master/7be2a15 (2022-11-04 18:51:45 UTC) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:27.224819" lifespan="210ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/00_elk_notification_sender.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:27.227047" lifespan="1ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/00_nolog.xml
+  </info>
+</log>
+<log realm="org.jpos.ee.CaptureDate" at="2022-11-10T09:45:27.237484">
+  <info>
+    CaptureDate: Thu Nov 10 00:00:00 ART 2022
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:27.237867" lifespan="10ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/01_capture_date.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:27.240300" lifespan="2ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/01_start.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:27.243578" lifespan="2ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/02_logback.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:27.662624" lifespan="418ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/10_jpts_txnmgr.xml
+  </info>
+</log>
+<log realm="mux-generator" at="2022-11-10T09:45:27.666721">
+  <info>
+    Requesting info about destinations
+  </info>
+</log>
+<log realm="stderr" at="2022-11-10T09:45:28.201699" lifespan="506ms">
+    ERROR StatusLogger Log4j2 could not find a logging implementation. Please add log4j-core to the classpath. Using SimpleLogger to log to the console...
+</log>
+<log realm="mux-generator" at="2022-11-10T09:45:29.755644">
+  <info>
+    Instantiating mux/channels for destinations: []
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:29.755909" lifespan="2092ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/10_mux_generator.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:29.759503" lifespan="3ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/20_keystore.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:29.769013" lifespan="9ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/20_sm.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:29.772451" lifespan="2ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/50_cmf_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:29.834973" lifespan="62ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/99_rest_health.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:29.839866" lifespan="4ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/99_sysmon.xml
+  </info>
+</log>
+<log realm="elk-notification-sender" at="2022-11-10T09:45:29.840577">
+  <start>
+    ELK notification service start
+  </start>
+</log>
+<log realm="logback-config" at="2022-11-10T09:45:29.841724">
+  <info>
+    Reading logback configuration from file: cfg/logback.xml
+  </info>
+</log>
+<log realm="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification" at="2022-11-10T09:45:29.848291">
+  <info>
+    start Thread[Thread-14,5,main]
+  </info>
+</log>
+<log realm="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification" at="2022-11-10T09:45:29.848438">
+  <info>
+    start Thread[Thread-15,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2022-11-10T09:45:29.856491">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2022-11-10T09:45:29.869814">
+  <info>
+           OS: Mac OS X (13.0)
+         Java: 11.0.16 (Oracle Corporation) AES-secure
+  environment: default
+ process name: 30413@NT-FVFHL4CUQ05N
+    user name: admin
+         host: NT-FVFHL4CUQ05N/192.168.0.204
+          cwd: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app
+   free space: 342.4 GiB
+      version: 2.1.8-SNAPSHOT (7be2a15)
+     instance: 44491d56-6623-4c4a-9537-a0e8c920f79d
+       uptime: 00:00:05.714 (3.202637)
+   processors: 8
+       drift : 0
+memory(t/u/f): 989/104/885
+     encoding: UTF-8
+     timezone: America/Argentina/Buenos_Aires (hora de Argentina) -03:00
+watch service: sun.nio.fs.PollingWatchService
+  metrics dir: null
+        clock: 1668084329 2022-11-10T12:45:29.861946Z
+ thread count: 51
+ peak threads: 51
+ user threads: 46
+        Thread[Reference Handler,10,system]
+        Thread[Finalizer,8,system]
+        Thread[Signal Dispatcher,9,system]
+        Thread[RMI TCP Accept-0,5,system]
+        Thread[pool-1-thread-1,5,main]
+        Thread[Q2-44491d56-6623-4c4a-9537-a0e8c920f79d,5,main]
+        Thread[DestroyJavaVM,5,main]
+        Thread[FileSystemWatcher,5,main]
+        Thread[Timer-0,5,main]
+        Thread[pool-5-thread-1,5,main]
+        Thread[I/O dispatcher 1,5,main]
+        Thread[I/O dispatcher 2,5,main]
+        Thread[I/O dispatcher 3,5,main]
+        Thread[I/O dispatcher 4,5,main]
+        Thread[I/O dispatcher 5,5,main]
+        Thread[I/O dispatcher 6,5,main]
+        Thread[I/O dispatcher 7,5,main]
+        Thread[I/O dispatcher 8,5,main]
+        Thread[Timer-1,5,main]
+        Thread[FileSystemWatcher,5,main]
+        Thread[FileDeletionDetector,5,main]
+        Thread[LogFlusher,5,main]
+        Thread[DataCorruptionVerifier,5,main]
+        Thread[INCompressor,5,main]
+        Thread[Cleaner-1,5,main]
+        Thread[Checkpointer,5,main]
+        Thread[StatCapture,5,main]
+        Thread[pool-4-thread-1,5,main]
+        Thread[C3P0PooledConnectionPoolManager[identityToken->1hge11oasr2myyg1u6frz1|7a57d165]-AdminTaskTimer,5,main]
+        Thread[C3P0PooledConnectionPoolManager[identityToken->1hge11oasr2myyg1u6frz1|7a57d165]-HelperThread-#0,5,main]
+        Thread[C3P0PooledConnectionPoolManager[identityToken->1hge11oasr2myyg1u6frz1|7a57d165]-HelperThread-#1,5,main]
+        Thread[C3P0PooledConnectionPoolManager[identityToken->1hge11oasr2myyg1u6frz1|7a57d165]-HelperThread-#2,5,main]
+        Thread[Hibernate 8732ea14-8e61-4945-a489-6a41447d2f99,5,main]
+        Thread[default-update-timestamps-region.data,5,main]
+        Thread[Statistics Thread-Hibernate 8732ea14-8e61-4945-a489-6a41447d2f99-1,5,main]
+        Thread[default-query-results-region.data,5,main]
+        Thread[org%002ejpos%002eee%002e%0052ealm.data,5,main]
+        Thread[org%002ejpos%002eee%002e%0053ys%0043onfig.data,5,main]
+        Thread[elk-notification-sender,5,main]
+        Thread[Thread-12,5,main]
+        Thread[pool-6-thread-1,5,main]
+        Thread[logback-1,5,main]
+        Thread[Timer-2,5,main]
+        Thread[jpts-txnmgr-0:idle,5,main]
+        Thread[jpts-txnmgr-1:idle,5,main]
+        Thread[pool-8-thread-1,5,main]
+        Thread[Thread-17,5,main]
+        Thread[health-server,5,main]
+        Thread[SystemMonitor,5,main]
+        Thread[server.main-incoming-ThreadPool.PooledThread-0,5,server.main-incoming-ThreadPool-0]
+        Thread[Common-Cleaner,8,InnocuousThreadGroup]
+name-registrar:
+  tspace:default: org.jpos.space.TSpace
+    <key count='1'>$TAILLOCK.30761332</key>
+     key-count: 1
+        gcinfo: 0,0
+  jpts-txnmgr: org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification
+    in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=2/128, tps=0, peak=0, avg=0.00
+  server.main-incoming: org.jpos.q2.iso.QServer
+  Q2: org.jpos.q2.Q2
+  capture-date: org.jpos.ee.CaptureDate
+  tspace:org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification@1d56174: org.jpos.space.TSpace
+    <key count='1'>$TAIL</key>
+    <key count='1'>$HEAD</key>
+     key-count: 2
+        gcinfo: 0,0
+  logger.NO_LOG: org.jpos.util.Logger
+  mux-generator: org.jpos.jpts.MUXGenerator
+  elk-notification-sender: org.jpos.notification.elk.ELKNotificationSender
+  ks: org.jpos.security.SimpleKeyFile
+  logger.nolog: org.jpos.util.Logger
+  ssm: org.jpos.security.jceadapter.SSM
+  tspace:internal-elk-notification-sender: org.jpos.space.TSpace
+     key-count: 0
+        gcinfo: 0,0
+  je:sequencers:log/sequencers: org.jpos.space.JESpace
+    <keycount>0</keycount>
+  logger.Q2: org.jpos.util.Logger
+  server.server.main-incoming: org.jpos.iso.ISOServer
+    connected=0, rx=0, tx=0, last=0
+  logger.Q2.buffered: org.jpos.util.BufferedLogListener
+  tspace:dbconfig: org.jpos.space.TSpace
+     key-count: 0
+        gcinfo: 0,0
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:43.860418">
+  <info>
+    shutting down (hook)
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.890458">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/99_sysmon.xml
+  </trace>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2022-11-10T09:45:44.891471">
+  <info>
+    Stopping SystemMonitor
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.892141">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/99_sysmon.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.892505">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/99_rest_health.xml
+  </trace>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2022-11-10T09:45:44.897835">
+  <info>
+           OS: Mac OS X (13.0)
+         Java: 11.0.16 (Oracle Corporation) AES-secure
+  environment: default
+ process name: 30413@NT-FVFHL4CUQ05N
+    user name: admin
+         host: NT-FVFHL4CUQ05N/192.168.0.204
+          cwd: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app
+   free space: 342.4 GiB
+      version: 2.1.8-SNAPSHOT (7be2a15)
+     instance: 44491d56-6623-4c4a-9537-a0e8c920f79d
+       uptime: 00:00:20.744 (2.640137)
+   processors: 8
+       drift : 0
+memory(t/u/f): 989/145/844
+     encoding: UTF-8
+     timezone: America/Argentina/Buenos_Aires (hora de Argentina) -03:00
+watch service: sun.nio.fs.PollingWatchService
+  metrics dir: null
+        clock: 1668084344 2022-11-10T12:45:44.892506Z
+ thread count: 53
+ peak threads: 54
+ user threads: 47
+        Thread[Reference Handler,10,system]
+        Thread[Finalizer,8,system]
+        Thread[Signal Dispatcher,9,system]
+        Thread[RMI TCP Accept-0,5,system]
+        Thread[SIGINT handler,9,system]
+        Thread[pool-1-thread-1,5,main]
+        Thread[Q2-44491d56-6623-4c4a-9537-a0e8c920f79d,5,main]
+        Thread[DestroyJavaVM,5,main]
+        Thread[FileSystemWatcher,5,main]
+        Thread[Timer-0,5,main]
+        Thread[pool-5-thread-1,5,main]
+        Thread[I/O dispatcher 1,5,main]
+        Thread[I/O dispatcher 2,5,main]
+        Thread[I/O dispatcher 3,5,main]
+        Thread[I/O dispatcher 4,5,main]
+        Thread[I/O dispatcher 5,5,main]
+        Thread[I/O dispatcher 6,5,main]
+        Thread[I/O dispatcher 7,5,main]
+        Thread[I/O dispatcher 8,5,main]
+        Thread[Timer-1,5,main]
+        Thread[FileSystemWatcher,5,main]
+        Thread[FileDeletionDetector,5,main]
+        Thread[LogFlusher,5,main]
+        Thread[DataCorruptionVerifier,5,main]
+        Thread[INCompressor,5,main]
+        Thread[Cleaner-1,5,main]
+        Thread[Checkpointer,5,main]
+        Thread[StatCapture,5,main]
+        Thread[pool-4-thread-1,5,main]
+        Thread[C3P0PooledConnectionPoolManager[identityToken->1hge11oasr2myyg1u6frz1|7a57d165]-AdminTaskTimer,5,main]
+        Thread[C3P0PooledConnectionPoolManager[identityToken->1hge11oasr2myyg1u6frz1|7a57d165]-HelperThread-#0,5,main]
+        Thread[C3P0PooledConnectionPoolManager[identityToken->1hge11oasr2myyg1u6frz1|7a57d165]-HelperThread-#1,5,main]
+        Thread[C3P0PooledConnectionPoolManager[identityToken->1hge11oasr2myyg1u6frz1|7a57d165]-HelperThread-#2,5,main]
+        Thread[Hibernate 8732ea14-8e61-4945-a489-6a41447d2f99,5,main]
+        Thread[default-update-timestamps-region.data,5,main]
+        Thread[Statistics Thread-Hibernate 8732ea14-8e61-4945-a489-6a41447d2f99-1,5,main]
+        Thread[default-query-results-region.data,5,main]
+        Thread[org%002ejpos%002eee%002e%0052ealm.data,5,main]
+        Thread[org%002ejpos%002eee%002e%0053ys%0043onfig.data,5,main]
+        Thread[elk-notification-sender,5,main]
+        Thread[Thread-12,5,main]
+        Thread[pool-6-thread-1,5,main]
+        Thread[logback-1,5,main]
+        Thread[Timer-2,5,main]
+        Thread[jpts-txnmgr-0:idle,5,main]
+        Thread[jpts-txnmgr-1:idle,5,main]
+        Thread[pool-8-thread-1,5,main]
+        Thread[Thread-17,5,main]
+        Thread[SystemMonitor,5,main]
+        Thread[nioEventLoopGroup-2-1,10,main]
+        Thread[Q2-ShutdownHook,5,main]
+        Thread[server.main-incoming-ThreadPool.PooledThread-0,5,server.main-incoming-ThreadPool-0]
+        Thread[Common-Cleaner,8,InnocuousThreadGroup]
+name-registrar:
+  tspace:default: org.jpos.space.TSpace
+    <key count='1'>$TAILLOCK.30761332</key>
+     key-count: 1
+        gcinfo: 0,0
+  jpts-txnmgr: org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification
+    in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=2/128, tps=0, peak=0, avg=0.00
+  server.main-incoming: org.jpos.q2.iso.QServer
+  Q2: org.jpos.q2.Q2
+  capture-date: org.jpos.ee.CaptureDate
+  tspace:org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification@1d56174: org.jpos.space.TSpace
+    <key count='1'>$TAIL</key>
+    <key count='1'>$HEAD</key>
+     key-count: 2
+        gcinfo: 0,0
+  logger.NO_LOG: org.jpos.util.Logger
+  mux-generator: org.jpos.jpts.MUXGenerator
+  elk-notification-sender: org.jpos.notification.elk.ELKNotificationSender
+  ks: org.jpos.security.SimpleKeyFile
+  logger.nolog: org.jpos.util.Logger
+  ssm: org.jpos.security.jceadapter.SSM
+  tspace:internal-elk-notification-sender: org.jpos.space.TSpace
+     key-count: 0
+        gcinfo: 0,0
+  je:sequencers:log/sequencers: org.jpos.space.JESpace
+    <keycount>0</keycount>
+  logger.Q2: org.jpos.util.Logger
+  server.server.main-incoming: org.jpos.iso.ISOServer
+    connected=0, rx=0, tx=0, last=0
+  logger.Q2.buffered: org.jpos.util.BufferedLogListener
+  tspace:dbconfig: org.jpos.space.TSpace
+     key-count: 0
+        gcinfo: 0,0
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.901219">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/99_rest_health.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.901483">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/50_cmf_server.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.902206">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/50_cmf_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.902442">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/20_sm.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.902685">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/20_sm.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.902868">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/20_keystore.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.903693">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/20_keystore.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.904183">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/10_mux_generator.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.904411">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/10_mux_generator.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.904739">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/10_jpts_txnmgr.xml
+  </trace>
+</log>
+<log realm="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification" at="2022-11-10T09:45:44.905433">
+  <info>
+    stop Thread[jpts-txnmgr-1:idle,5,main], active sessions=1
+  </info>
+</log>
+<log realm="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification" at="2022-11-10T09:45:44.905542">
+  <info>
+    stop Thread[jpts-txnmgr-0:idle,5,main], active sessions=0
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.906154">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/10_jpts_txnmgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.906607">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/02_logback.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.906847">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/02_logback.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.907161">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/01_start.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.907948">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/01_start.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.908320">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/01_capture_date.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.908614">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/01_capture_date.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.908933">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/00_nolog.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.909184">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/00_nolog.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T09:45:44.909722">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/jpts-app/build/install/jpts-app/deploy/00_logger.xml
+  </trace>
+</log>
+</logger>
