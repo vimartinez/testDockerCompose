@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2022-11-10T14:14:03.076639">
+  <info>
+    Q2 started, deployDir=/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy, environment=default
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.369553" lifespan="288ms">
+  <version>
+    jPOS 2.1.8-SNAPSHOT master/7be2a15 (2022-11-04 18:51:45 UTC) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.387184">
+  <warn>
+    Tidying /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/00_elk_notification_sender.xml out of the way, by adding .BAD
+    It will be called: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/00_elk_notification_sender.xml.BAD see log above for detail of problem.
+  </warn>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.387515" lifespan="13ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/00_elk_notification_sender.xml
+    <iso-exception>
+      org.jpos.core.ConfigurationException: url is required
+      <iso-exception>
+        url is required
+        org.jpos.core.ConfigurationException: url is required
+	at org.jpos.notification.elk.ELKNotificationSender.setConfiguration(ELKNotificationSender.java:221)
+	at org.jpos.q2.QFactory.setConfiguration(QFactory.java:378)
+	at org.jpos.q2.QFactory.createQBean(QFactory.java:114)
+	at org.jpos.q2.Q2.deploy(Q2.java:590)
+	at org.jpos.q2.Q2.deploy(Q2.java:401)
+	at org.jpos.q2.Q2.run(Q2.java:267)
+	at java.base/java.lang.Thread.run(Thread.java:834)
+      </iso-exception>
+      org.jpos.core.ConfigurationException: org.jpos.core.ConfigurationException: url is required (org.jpos.core.ConfigurationException: url is required)
+	at org.jpos.q2.QFactory.createQBean(QFactory.java:121)
+	at org.jpos.q2.Q2.deploy(Q2.java:590)
+	at org.jpos.q2.Q2.deploy(Q2.java:401)
+	at org.jpos.q2.Q2.run(Q2.java:267)
+	at java.base/java.lang.Thread.run(Thread.java:834)
+Nested:org.jpos.core.ConfigurationException: url is required
+	at org.jpos.notification.elk.ELKNotificationSender.setConfiguration(ELKNotificationSender.java:221)
+	at org.jpos.q2.QFactory.setConfiguration(QFactory.java:378)
+	at org.jpos.q2.QFactory.createQBean(QFactory.java:114)
+	at org.jpos.q2.Q2.deploy(Q2.java:590)
+	at org.jpos.q2.Q2.deploy(Q2.java:401)
+	at org.jpos.q2.Q2.run(Q2.java:267)
+	at java.base/java.lang.Thread.run(Thread.java:834)
+    </iso-exception>
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.394240" lifespan="5ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/06_visa_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.398725" lifespan="4ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/10_jpts_channel.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.408693" lifespan="9ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/20_jpts_mux.xml
+  </info>
+</log>
+<log realm="org.jpos.gw.LogonManager-config-echo" at="2022-11-10T14:14:03.449230">
+  <unpack>
+    <isomsg>
+      <!-- org.jpos.iso.packager.XMLPackager -->
+      <field id="0" value="2800"/>
+      <field id="3" value="990000"/>
+    </isomsg>
+  </unpack>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.450063" lifespan="40ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_logon_mgr.xml
+  </info>
+</log>
+<log realm="org.jpos.gw.LogonManager-config-logon" at="2022-11-10T14:14:03.455226">
+  <unpack>
+    <isomsg>
+      <!-- org.jpos.iso.packager.XMLPackager -->
+      <field id="0" value="0800"/>
+      <field id="70" value="071"/>
+    </isomsg>
+  </unpack>
+</log>
+<log realm="org.jpos.gw.LogonManager-config-logoff" at="2022-11-10T14:14:03.456391">
+  <unpack>
+    <isomsg>
+      <!-- org.jpos.iso.packager.XMLPackager -->
+      <field id="0" value="0800"/>
+      <field id="70" value="072"/>
+    </isomsg>
+  </unpack>
+</log>
+<log realm="org.jpos.gw.LogonManager-config-echo" at="2022-11-10T14:14:03.457296">
+  <unpack>
+    <isomsg>
+      <!-- org.jpos.iso.packager.XMLPackager -->
+      <field id="0" value="0800"/>
+      <field id="70" value="301"/>
+    </isomsg>
+  </unpack>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.457594" lifespan="7ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_logon_mgr_visa.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.501738" lifespan="43ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_txnmgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.505114" lifespan="3ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_visa_channel.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.507663" lifespan="2ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_visa_mux.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.568227" lifespan="60ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/99_rest_health.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:03.571773" lifespan="3ms">
+  <info>
+    deploy: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/99_sysmon.xml
+  </info>
+</log>
+<log realm="server.main-incoming.server" at="2022-11-10T14:14:03.597623">
+  <iso-server>
+    listening on port 11000
+  </iso-server>
+</log>
+<log realm="org.jpos.gw.LogonManager" at="2022-11-10T14:14:03.599306">
+  <trace>
+    thread is daemon: false
+  </trace>
+</log>
+<log realm="org.jpos.gw.LogonManager" at="2022-11-10T14:14:03.599408">
+  <trace>
+    thread is daemon: false
+  </trace>
+</log>
+<log realm="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification" at="2022-11-10T14:14:03.599904">
+  <info>
+    start Thread[Thread-5,5,main]
+  </info>
+</log>
+<log realm="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification" at="2022-11-10T14:14:03.600099">
+  <info>
+    start Thread[Thread-6,5,main]
+  </info>
+</log>
+<log realm="channel.jpts" at="2022-11-10T14:14:03.600996">
+  <error>
+    Unable to connect
+  </error>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2022-11-10T14:14:03.610554">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="channel.visa" at="2022-11-10T14:14:03.610655">
+  <connect>
+    Try 0 localhost:9999
+      Connection refused (Connection refused)
+    Unable to connect
+  </connect>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2022-11-10T14:14:03.632864">
+  <info>
+           OS: Mac OS X (13.0)
+         Java: 11.0.16 (Oracle Corporation) AES-secure
+  environment: default
+ process name: 43089@NT-FVFHL4CUQ05N
+    user name: admin
+         host: NT-FVFHL4CUQ05N/192.168.0.204
+          cwd: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa
+   free space: 342.1 GiB
+      version: 2.1.8-SNAPSHOT (7be2a15)
+     instance: 6e6bf854-0573-4c8d-a431-4c84ce839f29
+       uptime: 00:00:01.054 (2.125977)
+   processors: 8
+       drift : 0
+memory(t/u/f): 989/231/758
+     encoding: UTF-8
+     timezone: America/Argentina/Buenos_Aires (hora de Argentina) -03:00
+watch service: sun.nio.fs.PollingWatchService
+  metrics dir: null
+        clock: 1668100443 2022-11-10T17:14:03.615676Z
+ thread count: 24
+ peak threads: 24
+ user threads: 19
+        Thread[Reference Handler,10,system]
+        Thread[Finalizer,8,system]
+        Thread[Signal Dispatcher,9,system]
+        Thread[RMI TCP Accept-0,5,system]
+        Thread[pool-1-thread-1,5,main]
+        Thread[Q2-6e6bf854-0573-4c8d-a431-4c84ce839f29,5,main]
+        Thread[DestroyJavaVM,5,main]
+        Thread[FileSystemWatcher,5,main]
+        Thread[Timer-0,5,main]
+        Thread[Thread-2,5,main]
+        Thread[Thread-3,5,main]
+        Thread[pool-4-thread-1,5,main]
+        Thread[logon-mgr-jpts,5,main]
+        Thread[visa-lgm-visa,5,main]
+        Thread[Timer-1,5,main]
+        Thread[ss-visa-txnmgr-0:idle,5,main]
+        Thread[ss-visa-txnmgr-1:idle,5,main]
+        Thread[pool-5-thread-1,5,main]
+        Thread[channel-sender-visa-send,5,main]
+        Thread[channel-receiver-visa-receive,5,main]
+        Thread[health-server,5,main]
+        Thread[SystemMonitor,5,main]
+        Thread[server.main-incoming-ThreadPool.PooledThread-0,5,server.main-incoming-ThreadPool-0]
+        Thread[Common-Cleaner,8,InnocuousThreadGroup]
+name-registrar:
+  tspace:default: org.jpos.space.TSpace
+    <key count='1'>$TAILLOCK.1857747787</key>
+     key-count: 1
+        gcinfo: 0,0
+  tspace:org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification@6ebafb4b: org.jpos.space.TSpace
+    <key count='1'>$TAIL</key>
+    <key count='1'>$HEAD</key>
+     key-count: 2
+        gcinfo: 0,0
+  server.main-incoming: org.jpos.q2.iso.QServer
+  Q2: org.jpos.q2.Q2
+  mux.visa: org.jpos.q2.iso.QMUX
+    tx=0, rx=0, tx_expired=0, tx_pending=0, rx_expired=0, rx_pending=0, rx_unhandled=0, rx_forwarded=0, connected=false, last=0
+  channel.jpts: org.jpos.visa.channel.OneShotChannelAdaptorMK2
+  logger.NO_LOG: org.jpos.util.Logger
+  ss-visa-txnmgr: org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification
+    in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=2/128, tps=0, peak=0, avg=0.00
+  channel.channel.visa: org.jpos.iso.channel.VAPChannel
+  channel.visa: org.jpos.visa.channel.ChannelAdaptor
+    tx=0, rx=0, connects=0, last=0
+  logger.Q2: org.jpos.util.Logger
+  server.server.main-incoming: org.jpos.iso.ISOServer
+    connected=0, rx=0, tx=0, last=0
+  logger.Q2.buffered: org.jpos.util.BufferedLogListener
+  mux.jpts: org.jpos.q2.iso.QMUX
+    tx=0, rx=0, tx_expired=0, tx_pending=0, rx_expired=0, rx_pending=0, rx_unhandled=0, rx_forwarded=0, connected=false, last=0
+  jdbm:visa:log/logon: org.jpos.space.JDBMSpace
+  jdbm:jpts:log/logon: org.jpos.space.JDBMSpace
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.311098">
+  <info>
+    shutting down (hook)
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.622904">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/99_sysmon.xml
+  </trace>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2022-11-10T14:14:08.623237">
+  <info>
+    Stopping SystemMonitor
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.623455">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/99_sysmon.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.623589">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/99_rest_health.xml
+  </trace>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2022-11-10T14:14:08.625502">
+  <info>
+           OS: Mac OS X (13.0)
+         Java: 11.0.16 (Oracle Corporation) AES-secure
+  environment: default
+ process name: 43089@NT-FVFHL4CUQ05N
+    user name: admin
+         host: NT-FVFHL4CUQ05N/192.168.0.204
+          cwd: /Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa
+   free space: 342.1 GiB
+      version: 2.1.8-SNAPSHOT (7be2a15)
+     instance: 6e6bf854-0573-4c8d-a431-4c84ce839f29
+       uptime: 00:00:06.061 (2.035645)
+   processors: 8
+       drift : 0
+memory(t/u/f): 989/269/720
+     encoding: UTF-8
+     timezone: America/Argentina/Buenos_Aires (hora de Argentina) -03:00
+watch service: sun.nio.fs.PollingWatchService
+  metrics dir: null
+        clock: 1668100448 2022-11-10T17:14:08.623545Z
+ thread count: 26
+ peak threads: 27
+ user threads: 20
+        Thread[Reference Handler,10,system]
+        Thread[Finalizer,8,system]
+        Thread[Signal Dispatcher,9,system]
+        Thread[RMI TCP Accept-0,5,system]
+        Thread[SIGINT handler,9,system]
+        Thread[pool-1-thread-1,5,main]
+        Thread[Q2-6e6bf854-0573-4c8d-a431-4c84ce839f29,5,main]
+        Thread[DestroyJavaVM,5,main]
+        Thread[FileSystemWatcher,5,main]
+        Thread[Timer-0,5,main]
+        Thread[Thread-2,5,main]
+        Thread[Thread-3,5,main]
+        Thread[pool-4-thread-1,5,main]
+        Thread[logon-mgr-jpts,5,main]
+        Thread[visa-lgm-visa,5,main]
+        Thread[Timer-1,5,main]
+        Thread[ss-visa-txnmgr-0:idle,5,main]
+        Thread[ss-visa-txnmgr-1:idle,5,main]
+        Thread[pool-5-thread-1,5,main]
+        Thread[channel-sender-visa-send,5,main]
+        Thread[channel-receiver-visa-receive,5,main]
+        Thread[SystemMonitor,5,main]
+        Thread[nioEventLoopGroup-2-1,10,main]
+        Thread[Q2-ShutdownHook,5,main]
+        Thread[server.main-incoming-ThreadPool.PooledThread-0,5,server.main-incoming-ThreadPool-0]
+        Thread[Common-Cleaner,8,InnocuousThreadGroup]
+name-registrar:
+  tspace:default: org.jpos.space.TSpace
+    <key count='1'>$TAILLOCK.1857747787</key>
+     key-count: 1
+        gcinfo: 0,0
+  tspace:org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification@6ebafb4b: org.jpos.space.TSpace
+    <key count='1'>$TAIL</key>
+    <key count='1'>$HEAD</key>
+     key-count: 2
+        gcinfo: 0,0
+  server.main-incoming: org.jpos.q2.iso.QServer
+  Q2: org.jpos.q2.Q2
+  mux.visa: org.jpos.q2.iso.QMUX
+    tx=0, rx=0, tx_expired=0, tx_pending=0, rx_expired=0, rx_pending=0, rx_unhandled=0, rx_forwarded=0, connected=false, last=0
+  channel.jpts: org.jpos.visa.channel.OneShotChannelAdaptorMK2
+  logger.NO_LOG: org.jpos.util.Logger
+  ss-visa-txnmgr: org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification
+    in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=2/128, tps=0, peak=0, avg=0.00
+  channel.channel.visa: org.jpos.iso.channel.VAPChannel
+  channel.visa: org.jpos.visa.channel.ChannelAdaptor
+    tx=0, rx=0, connects=0, last=0
+  logger.Q2: org.jpos.util.Logger
+  server.server.main-incoming: org.jpos.iso.ISOServer
+    connected=0, rx=0, tx=0, last=0
+  logger.Q2.buffered: org.jpos.util.BufferedLogListener
+  mux.jpts: org.jpos.q2.iso.QMUX
+    tx=0, rx=0, tx_expired=0, tx_pending=0, rx_expired=0, rx_pending=0, rx_unhandled=0, rx_forwarded=0, connected=false, last=0
+  jdbm:visa:log/logon: org.jpos.space.JDBMSpace
+  jdbm:jpts:log/logon: org.jpos.space.JDBMSpace
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.638622">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/99_rest_health.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.638861">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_visa_mux.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.639321">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_visa_mux.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.639442">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_visa_channel.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.640093">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_visa_channel.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.640222">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_txnmgr.xml
+  </trace>
+</log>
+<log realm="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification" at="2022-11-10T14:14:08.640719">
+  <info>
+    stop Thread[ss-visa-txnmgr-0:idle,5,main], active sessions=1
+  </info>
+</log>
+<log realm="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification" at="2022-11-10T14:14:08.640763">
+  <info>
+    stop Thread[ss-visa-txnmgr-1:idle,5,main], active sessions=0
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.641063">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_txnmgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:08.641456">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_logon_mgr_visa.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:10.647588">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_logon_mgr_visa.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:10.649743">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_logon_mgr.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:12.655662">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/30_logon_mgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:12.656989">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/20_jpts_mux.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:12.657646">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/20_jpts_mux.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:12.658392">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/10_jpts_channel.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:12.659447">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/10_jpts_channel.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:12.660134">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/06_visa_server.xml
+  </trace>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:12.661837">
+  <info>
+    undeployed:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/06_visa_server.xml
+  </info>
+</log>
+<log realm="server.main-incoming.pool" at="2022-11-10T14:14:12.663575">
+  <queue-closed/>
+</log>
+<log realm="Q2.system" at="2022-11-10T14:14:12.664232">
+  <trace>
+    undeploying:/Users/victordanielmartinez/Documents/Trabajo/Fuentes/jpts/modules/ss-visa/build/install/ss-visa/deploy/00_logger.xml
+  </trace>
+</log>
+</logger>

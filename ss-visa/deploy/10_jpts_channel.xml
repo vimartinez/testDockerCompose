@@ -1,0 +1,17 @@
+<channel-adaptor name="channel.jpts" class="org.jpos.visa.channel.OneShotChannelAdaptorMK2" logger="Q2">
+
+    <channel class="org.jpos.iso.channel.XMLChannel" packager="org.jpos.iso.packager.XMLPackager"
+             realm="channel.jpts" logger="Q2">
+        <property name="host" value="${JPTS_REMOTE_HOST:localhost}"/>
+        <property name="port" value="${JPTS_REMOTE_PORT:7777}"/>
+        <property name="timeout" value="${jpts_cmf_timeout:60000}"/>
+        <property name="connect-timeout" value="${jpts_cmf_connect_timeout:1000}"/>
+    </channel>
+
+    <max-connections>${MAX_CONNECTIONS_CHANNEL:100}</max-connections>
+    <in>jpts-send</in>
+    <out>jpts-receive</out>
+    <origin-alert>SS-VISA</origin-alert>
+    <reconnect-delay>${reconnect_delay:60000}</reconnect-delay>
+
+</channel-adaptor>

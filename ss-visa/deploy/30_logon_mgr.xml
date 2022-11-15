@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<logon-mgr class="org.jpos.gw.LogonManager" logger="Q2">
+    <property name="persistent-space" value="jdbm:jpts:log/logon"/>
+
+    <!-- we can add multiple "mux" properties -->
+    <property name="mux" value="jpts"/>
+
+    <property name="timeout" value="15000"/>  <!-- timeout when waiting for response -->
+    <property name="echo-interval" value="60000"/> <!-- 60 seconds (channel timeout is in 10 min) -->
+    <property name="only-echo" value="true"/> <!-- this is for cmf channels, they dont support logon -->
+
+
+    <echo>
+        <isomsg>
+            <field id="0" value="2800"/>
+            <field id="3" value="990000"/>
+        </isomsg>
+    </echo>
+</logon-mgr>

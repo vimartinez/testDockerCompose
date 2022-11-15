@@ -1,0 +1,15 @@
+<mux class="org.jpos.q2.iso.QMUX" logger="Q2" name="visa">
+    <in>visa-receive</in>
+    <out>visa-send</out>
+    <ready>channel.visa.ready</ready>
+
+    <request-listener class="org.jpos.visa.HeaderDebugListener" logger="Q2" realm="visa-header-handler"/>
+
+    <request-listener class="org.jpos.visa.EchoHandler" logger="Q2" realm="visa-echo-handler"/>
+
+    <request-listener class="org.jpos.trace.IncomingSupportTraceIdAware" logger="Q2" realm="visa-request-listener">
+        <property name="timeout" value="15000"/>
+        <property name="request" value="SS_REQUEST"/>
+        <property name="queue" value="TXNMGR"/>
+    </request-listener>
+</mux>

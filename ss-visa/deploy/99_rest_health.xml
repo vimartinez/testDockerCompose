@@ -1,0 +1,6 @@
+<health class="com.prisma.prepaidcard.RestHealthServer" logger="${REST_HEALTH_LOGGER:NO_LOG}"
+        name="health-server">
+    <property name="port" value="${SS_VISA_HEALTH_CHECK_PORT:15000}"/>
+    <property name="readiness_collectors" value="${SS_VISA_HEALTH_CHECK_QBEANS_READINESS:server.main-incoming,ss-visa-txnmgr}"/>
+    <property name="liveness_collectors" value="${SS_VISA_HEALTH_CHECK_QBEANS_LIVENESS:server.main-incoming,ss-visa-txnmgr,channel.jpts}"/>
+</health>

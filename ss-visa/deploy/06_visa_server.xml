@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+
+<server class="org.jpos.q2.iso.QServer" logger="Q2" name="server.main-incoming">
+    <attr name="port" type="java.lang.Integer">${SS_VISA_SERVER_PORT:11000}</attr>
+
+    <channel class="org.jpos.iso.channel.VAPChannel"
+             realm="visa-channel" logger="Q2"
+             packager="org.jpos.iso.packager.GenericPackager">
+
+        <property name="packager-logger" value="Q2"/>
+        <property name="packager-config" value="jar:packager/visa.xml"/>
+        <!--<property name="timeout" value="300000" />-->
+        <property name="keep-alive" value="true"/>
+        <property name="trailer" value="false"/>
+
+        <filter class="org.jpos.trace.TraceIdISOFilter" direction="both">
+            <property name="type" value="CMF"/>
+        </filter>
+    </channel>
+
+    <request-listener
+            class="org.jpos.visa.EchoHandler" logger="Q2" realm="visa-echo-handler"/>
+
+    <request-listener
+            class="org.jpos.trace.IncomingSupportTraceIdAware" logger="Q2"
+            realm="traceable-request-listener">
+        <property name="timeout" value="15000"/>
+        <property name="request" value="SS_REQUEST"/>
+        <property name="queue" value="TXNMGR"/>
+    </request-listener>
+
+</server>

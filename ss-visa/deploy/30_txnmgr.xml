@@ -1,0 +1,112 @@
+<txnmgr class="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification"
+        logger="Q2" name="ss-visa-txnmgr">
+    <property name="queue" value="TXNMGR"/>
+    <property name="sessions" value="2"/>
+    <property name="max-sessions" value="${MAX_SESSIONS_TXNMGR:128}"/>
+    <property name="debug" value="true"/>
+    <property name="xray-iso-response" value="SS_RESPONSE" />
+    <property name="freeze-payload" value="${LOG_DUMP_FREEZE_PAYLOAD:true}" />
+    <property name="notification-sender" value="elk-notification-sender"/>
+
+    <frozen-handler>
+
+        <property name="dump-log-as-xml" value="${LOG_DUMP_LOG_AS_XML:true}" />
+        <property name="dump-iso-as-xml" value="${LOG_DUMP_ISO_AS_XML:true}" />
+        <!-- Here we use the default object serializer (empty) for the aws xray objects -->
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.strategy.ContextMissingStrategy"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.strategy.PrioritizationStrategy"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.internal.IdGenerator"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.contexts.ResolverChain"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.AWSXRayRecorder"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.entities.Entity"/>
+    </frozen-handler>
+
+    <participant class="org.jpos.aws.xray.XRayISOMsgBeginReportParticipant" logger="Q2" realm="xray">
+        <property name="segment_name" value="ss-visa" />
+        <property name="wrap-db" value="false" />
+        <property name="REQUEST" value="SS_REQUEST" />
+    </participant>
+
+    <participant class="org.jpos.visa.participant.PrepareCMFRequest" logger="Q2" realm="prepare">
+        <property name="compatible-fields"
+                  value="2,14,23,32,37,39,52"/>
+    </participant>
+    <participant class="org.jpos.visa.participant.adapter.MTIAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.ProcessingCodeAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.StanAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.AdapterParticipant" logger="Q2" realm="prepare"
+                 adapter="org.jpos.gw.adapters.V87AndV93AmountAdapter"/>
+    <participant class="org.jpos.visa.participant.adapter.LocalDateAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.AdapterParticipant" logger="Q2" realm="prepare"
+                 adapter="org.jpos.gw.adapters.V87MerchantAdapter"/>
+    <participant class="org.jpos.visa.participant.adapter.AdapterParticipant" logger="Q2" realm="prepare"
+                 adapter="org.jpos.gw.adapters.MCCAdapter"/>
+    <participant class="org.jpos.visa.participant.adapter.Field55Adapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.AdapterParticipant" logger="Q2" realm="prepare"
+                 adapter="org.jpos.gw.adapters.V87PDCAdapter"/>
+    <participant class="org.jpos.visa.participant.adapter.AdapterParticipant" logger="Q2" realm="prepare"
+                 adapter="org.jpos.gw.adapters.Track2Adapter"/>
+    <participant class="org.jpos.visa.participant.adapter.CardAcceptorAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.ReplacementAmountAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.Field61OtherAmountsAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.AcquirerAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.ExchangeAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.AdapterParticipant" logger="Q2" realm="prepare"
+                 adapter="org.jpos.gw.adapters.V87OriginalDataElementsAdapter"/>
+    <participant class="org.jpos.visa.participant.adapter.FunctionCodeAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.ReasonCodeAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.TransactionFeeAmountAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.Field48AdditionalDataAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.VisaIDAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.Field60AdditionalPosInformationAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.Field62OnlineRiskAssessment" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.Field125SupportingInformationAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.Field123VerificationDataAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.Field126VisaPrivateUseFieldsAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.Field104TransactionSpecificDataAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.Field117ArgentinaAgro" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.TraceIDAdapter" logger="Q2" realm="prepare"/>
+
+    <participant class="org.jpos.aws.xray.QueryHostXRayAware" logger="Q2" realm="query-host">
+        <property name="timeout" value="${ss_visa_query_host_timeout:100000}"/>
+        <property name="wait-timeout" value="${ss_visa_query_host_wait_timeout:2000}"/>
+        <property name="request" value="REQUEST"/>
+        <property name="response" value="RESPONSE"/>
+    </participant>
+
+    <participant class="org.jpos.visa.participant.PrepareVisaResponse" logger="Q2" realm="prepare-response">
+        <property name="echo-fields"
+                  value="2,3,4,5,6,7,9,10,11,15,16,19,20,23,24,25,32,37,38,39,41,42,44,48,49,50,51,58,59,61,62,63,90,95,104,125,126"/>
+        <property name="forward"
+                  value="37,38"/>
+    </participant>
+    <participant class="org.jpos.visa.participant.adapter.AdapterParticipant" logger="Q2" realm="prepare-response"
+                 adapter="org.jpos.gw.adapters.V87AndV93AmountAdapter"/>
+    <participant class="org.jpos.visa.participant.adapter.AdapterParticipant" logger="Q2" realm="prepare-response"
+                 adapter="org.jpos.gw.adapters.V87AdditionalAmountsAdapter"/>
+    <participant class="org.jpos.visa.participant.adapter.Field44AdditionalResponseDataAdapter" logger="Q2" realm="prepare-response" />
+    <participant class="org.jpos.visa.participant.adapter.Field55Adapter" logger="Q2" realm="prepare-response" />
+    <participant class="org.jpos.visa.participant.adapter.Field117ArgentinaAgro" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.Field123VerificationDataAdapter" logger="Q2" realm="prepare"/>
+    <participant class="org.jpos.visa.participant.adapter.PartialApprovalAdapter" logger="Q2" realm="prepare-response" />
+    <participant class="org.jpos.visa.participant.adapter.ResultCodeAdapter" logger="Q2" realm="prepare-response" />
+    <participant class="org.jpos.visa.participant.adapter.Field104TransactionSpecificDataAdapter" logger="Q2" realm="prepare-response" />
+
+    <participant class="org.jpos.visa.participant.SendResponse" logger="Q2" realm="send-response">
+        <property name="request" value="SS_REQUEST"/>
+        <property name="response" value="SS_RESPONSE"/>
+    </participant>
+
+    <participant class="org.jpos.transaction.ProtectDebugInfo" logger="Q2" realm="ProtectDebug"
+                 enabled="${PROTECT_LOG:true}">
+        <property name="protect" value="2 35 45 54 61 113.17 123.61"/>
+        <property name="wipe" value="14 52 62 63 123.52 123.62 123.63"/>
+    </participant>
+
+    <participant class="org.jpos.notification.txnmgr.integration.AlertParticipant" logger="Q2" realm="alert-participant"/>
+
+    <participant class="org.jpos.gw.participant.NotifyAbortToELK" logger="Q2" realm="visa-abort-notifier">
+        <property name="sender-name" value="elk-notification-sender" />
+    </participant>
+
+</txnmgr>

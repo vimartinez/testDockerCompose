@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<logon-mgr class="org.jpos.gw.LogonManager" logger="Q2" name="visa-lgm">
+    <property name="persistent-space" value="jdbm:visa:log/logon"/>
+
+    <property name="mux" value="visa"/>
+
+    <property name="timeout" value="15000"/>
+    <property name="echo-interval" value="${visa_eas_echo_interval:60000}"/>
+    <property name="logon-interval" value="86400000"/> <!-- 1 dia -->
+    <property name="initial-delay" value="10000"/> <!-- initial delay between logon and echo-->
+    <property name="srcid" value="${SS_VISA_SRCID:100000}" />
+    <property name="dstid" value="${SS_VISA_DSTID:100000}" />
+
+    <logon>
+        <isomsg>
+            <field id="0" value="0800"/>
+            <field id="70" value="071"/>
+        </isomsg>
+    </logon>
+    <logoff>
+        <isomsg>
+            <field id="0" value="0800"/>
+            <field id="70" value="072"/>
+        </isomsg>
+    </logoff>
+
+    <echo>
+        <isomsg>
+            <field id="0" value="0800"/>
+            <field id="70" value="301"/>
+        </isomsg>
+    </echo>
+</logon-mgr>

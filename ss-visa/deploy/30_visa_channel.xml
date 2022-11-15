@@ -1,0 +1,26 @@
+<channel-adaptor name="channel.visa"
+	class="org.jpos.visa.channel.ChannelAdaptor" logger="Q2">
+
+	<channel class="org.jpos.iso.channel.VAPChannel"
+		realm="channel.visa" logger="Q2"
+		packager="org.jpos.iso.packager.GenericPackager">
+
+		<property name="packager-config" value="jar:packager/visa.xml" />
+		<property name="srcid" value="${SS_VISA_SRCID:100000}" />
+		<property name="dstid" value="${SS_VISA_DSTID:100000}" />
+		<property name="host" value="${EAS_REMOTE_HOST:localhost}" />
+		<property name="port" value="${EAS_REMOTE_PORT:9999}" />
+		<property name="packager-logger" value="${SS_VISA_PACKAGER_LOGGER:Q2}" />
+		<property name="packager-realm" value="visa-packager-debug" />
+		<filter class="org.jpos.trace.TraceIdISOFilter" direction="both">
+			<property name="type" value="CMF"/>
+		</filter>
+
+	</channel>
+
+	<in>visa-send</in>
+	<out>visa-receive</out>
+	<origin-alert>SS-VISA</origin-alert>
+	<reconnect-delay>${reconnect_delay:10000}</reconnect-delay>
+
+</channel-adaptor>

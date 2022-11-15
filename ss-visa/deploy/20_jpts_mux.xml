@@ -1,0 +1,5 @@
+<mux class="org.jpos.q2.iso.QMUX" logger="Q2" name="jpts">
+    <in>jpts-receive</in>
+    <out>jpts-send</out>
+    <ready>channel.jpts.ready</ready>
+</mux>
