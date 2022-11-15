@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<!--
+  Use this server to feed CMF test messages in XML format
+  The message will be handed over to Transaction Manager waiting in the
+  default's space "JPTS.TXN"
+-->
+<server class="org.jpos.q2.iso.QServer" logger="nolog" name="server.main-incoming">
+  <attr name="port" type="java.lang.Integer">${JPTS_SERVER_PORT:7777}</attr>
+  <attr name="maxSessions" type="java.lang.Integer">${MAX_CONNECTIONS_CMF_SERVER:100}</attr>
+
+  <channel class="org.jpos.iso.channel.XMLChannel" logger="Q2"
+           realm="xmlcmf-incoming-channel"
+           packager="org.jpos.iso.packager.XML2003Packager">
+  </channel>
+
+    <request-listener class="org.jpos.jpts.Dispatcher" logger="Q2" realm="incoming-request-listener">
+        <property name="prefix" value="org.jpos.jpts.Incoming_"/>
+        <property name="timeout" value="15000"/>
+        <property name="space" value="tspace:default"/>
+        <property name="queue" value="JPTS.TXN"/>
+        <property name="station" value="SS_XML"/>
+    </request-listener>
+</server>
+

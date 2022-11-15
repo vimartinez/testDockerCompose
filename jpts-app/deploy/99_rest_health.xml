@@ -1,0 +1,7 @@
+<health class="com.prisma.prepaidcard.RestHealthServer" logger="${REST_HEALTH_LOGGER:NO_LOG}"
+        name="health-server">
+    <property name="port" value="${JPTS_CMF_HEALTH_CHECK_PORT:15001}"/>
+    <property name="readiness_collectors" value="${JPTS_HEALTH_CHECK_QBEANS_READINESS:server.main-incoming,jpts-txnmgr,db}"/>
+    <property name="liveness_collectors" value="${JPTS_HEALTH_CHECK_QBEANS_LIVENESS:server.main-incoming,jpts-txnmgr,mux-generator}"/>
+    <collector class="com.prisma.prepaidcard.collector.DBHealthCollector"/>
+</health>

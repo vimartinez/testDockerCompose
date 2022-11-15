@@ -1,0 +1,17 @@
+<bean class="org.jpos.jpts.MUXGenerator" name="mux-generator">
+
+    <property name="debug" value="${MG_REPORT_DEBUG:true}" />
+    <property name="report-down-when-diff-ds" value="${MG_REPORT_DOWN_WHEN_DIFF_DS:true}"/>
+    <property name="report-health-of-channels" value="${MG_REPORT_HEALTH_OF_CHANNELS:true}"/>
+
+    <property name="channel-timeout" value="${MG_CHANNEL_TIMEOUT:300000}"/>
+    <property name="channel-max-connections" value="${MG_MAX_CONNECTIONS:100}"/>
+    <property name="channel-reconnect-delay" value="${MG_RECONNECT_DELAY:1000}"/>
+    <property name="channel-logger" value="${MG_CHANNEL_LOGGER:Q2}"/>
+
+    <property name="mux-name-template" value="%s"/>
+    <property name="channel-name-template" value="channel.%s"/>
+
+    <property name="port-template" value="${MG_PORT_TEMPLATE:${%s_PORT}}"/>
+    <property name="host-template" value="${MG_HOST_TEMPLATE:${%s_HOST}}"/>
+</bean>

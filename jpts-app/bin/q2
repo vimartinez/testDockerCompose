@@ -1,0 +1,12 @@
+#!/bin/sh
+
+cd `dirname $0`/.. || exit 1
+rm -f deploy/shutdown.xml
+exec java -server \
+    -Xmx1G \
+    -Dappname=jPTS \
+    -Dcom.sun.management.jmxremote \
+    -Djava.net.preferIPv4Stack=true \
+    -Ddb.create.enabled=YES \
+    -jar jpts-app-1.14.0.jar "$@"
+

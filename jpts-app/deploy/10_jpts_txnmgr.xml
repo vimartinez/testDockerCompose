@@ -1,0 +1,291 @@
+<?xml version='1.0'?>
+<!DOCTYPE SYSTEM [
+  <!ENTITY prepare_and_open   SYSTEM "prepare_and_open.inc">
+  <!ENTITY create_tranlog     SYSTEM "create_tranlog.inc">
+  <!ENTITY query_host         SYSTEM "query_host.inc">
+  <!ENTITY query_host_or_saf  SYSTEM "query_host_or_saf.inc">
+  <!ENTITY select_ds          SYSTEM "select_ds.inc">
+  <!ENTITY create_ds_request  SYSTEM "create_ds_request.inc">
+  <!ENTITY create_ss_response SYSTEM "create_ss_response.inc">
+  <!ENTITY log_ds_response    SYSTEM "log_ds_response.inc">
+  <!ENTITY response_enricher  SYSTEM "response_enricher.inc">
+  <!ENTITY KID "bdk.001">
+  ]>
+
+<jpts-txnmgr class="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification"
+             logger="Q2" name="jpts-txnmgr" xmlns="">
+ <property name="queue" value="JPTS.TXN" />
+ <property name="sessions" value="2" />
+ <property name="max-sessions" value="${JPTS_TXN_MGR_MAX_SESSIONS:128}" />
+ <property name="debug" value="true" />
+ <property name="call-selector-on-abort" value="true" />
+ <property name="xray-iso-response" value="SS_RESPONSE" />
+ <property name="notification-sender" value="elk-notification-sender"/>
+ 
+ <!-- If we want to override the json serialization -->
+ <frozen-handler>
+  <!-- Here we use the default object serializer (empty) for the DB object -->
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.DB"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.strategy.ContextMissingStrategy"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.strategy.PrioritizationStrategy"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.internal.IdGenerator"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.contexts.ResolverChain"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.AWSXRayRecorder"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.entities.Entity"/>
+  <!-- TODO there is a error serializing because #bins is not initialized -->
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.CardProduct"/>
+ </frozen-handler>
+
+ <participant class="org.jpos.aws.xray.XRayISOMsgBeginReportParticipant" logger="Q2" realm="xray">
+  <property name="segment_name" value="jpts" />
+  <property name="wrap-db" value="false" />
+  <property name="REQUEST" value="SS_REQUEST" />
+ </participant>
+
+ &prepare_and_open;
+
+ <participant class="org.jpos.transaction.Switch" logger="Q2" realm="Switch">
+  <property name="unknown" value="notsupported   close sendresponse" />
+  <property name="100.00"  value="authorization  close sendresponse" />
+  <property name="100.01"  value="authorization  close sendresponse" />
+  <property name="100.09"  value="authorization close sendresponse" /> <!-- Purchase with cashback -->
+  <property name="100.10"  value="authorization close sendresponse" /> <!--  -->
+  <property name="101.00"  value="authorization  close sendresponse" />
+  <property name="100.17"  value="authorization  close sendresponse" />
+  <property name="100.20"  value="authorization close sendresponse" /> <!--  -->
+  <property name="100.01"  value="authorization close sendresponse" /> <!-- Cash Withdrawal -->
+  <property name="100.26"  value="authorization close sendresponse" /> <!--  -->
+  <property name="100.28"  value="authorization close sendresponse" /> <!--  -->
+  <property name="100.72"  value="authorization close sendresponse" /> <!--  -->
+  <property name="100.30"  value="balanceinquiry close sendresponse" /> <!-- available balance -->
+  <property name="100.31"  value="balanceinquiry close sendresponse" /> <!-- balance -->
+  <property name="100.39"  value="installment-payment-inquiry close sendresponse" /> <!-- installment payment inquiry -->
+  <property name="200.00"  value="financial      close sendresponse"/>
+  <property name="200.01"  value="financial      close sendresponse"/>
+  <property name="200.20"  value="financial-refund      close sendresponse"/>
+  <property name="220.00"  value="clearing       close sendresponse" />
+  <property name="240.00"  value="presentation       close sendresponse" />
+  <property name="240.20"  value="presentation       close sendresponse" />
+
+  <property name="400.00"  value="reversal  close sendresponse"/>
+  <property name="400.01"  value="reversal  close sendresponse"/>
+  <property name="400.10"  value="reversal  close sendresponse"/>
+  <property name="400.20"  value="reversal  close sendresponse"/>
+  <property name="400.28"  value="reversal  close sendresponse"/>
+  <property name="400.30"  value="reversal  close sendresponse"/>
+  <property name="400.72"  value="reversal  close sendresponse"/>
+
+  <property name="120.00"  value="advices close sendresponse" /> <!-- advices -->
+  <property name="120.01"  value="advices close sendresponse" />
+  <property name="120.26"  value="advices close sendresponse" /> <!-- advices visa direct-->
+  <property name="120.39"  value="advices close sendresponse" />
+  <property name="420.00"  value="advices  close sendresponse"/>
+  <property name="420.01"  value="advices  close sendresponse"/>
+  <property name="420.10"  value="advices  close sendresponse"/>
+  <property name="420.20"  value="advices  close sendresponse"/>
+  <property name="420.28"  value="advices  close sendresponse"/>
+  <property name="420.72"  value="advices  close sendresponse"/>
+ </participant>
+
+ <group name="notsupported">
+  &create_tranlog;
+     <participant class="org.jpos.jpts.NotSupported" logger="Q2" realm="not-supported" />
+ </group>
+
+ <group name="balanceinquiry">
+  <participant class="org.jpos.transaction.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="message"   value="SS_REQUEST" />
+   <property name="mandatory" value="PCODE,7,11,12,PAN,22,41" />
+   <property name="optional"  value="AMOUNT,5,6,15,17,23,24,25,26,32,33,36,37,42,43,45,46,52,54,55,59,60,62,63,111,112,113,123,200" />
+  </participant>
+  &create_tranlog;
+  &select_ds;
+  &create_ds_request;
+  &query_host;
+  &response_enricher;
+  &log_ds_response;
+  &create_ss_response;
+ </group>
+
+ <group name="authorization">
+  <participant class="org.jpos.transaction.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="message"   value="SS_REQUEST" />
+   <property name="mandatory" value="PCODE,AMOUNT,7,11,12,PAN,22,41" />
+   <property name="optional"  value="15,17,23,24,25,26,32,33,36,37,42,43,45,46,49,52,53,54,55,59,60,61,62,63,111,112,113,117,19,23,123,5,6,9,10,16,53,125,126,200" />
+  </participant>
+  &create_tranlog;
+  &select_ds;
+  &create_ds_request;
+  &query_host;
+  &response_enricher;
+  &log_ds_response;
+  &create_ss_response;
+ </group>
+
+ <group name="reversal">
+  <participant class="org.jpos.transaction.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="message"   value="SS_REQUEST" />
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN,41" />
+   <property name="optional"  value="6,15,17,21,22,23,24,25,26,30,32,37,38,39,42,43,46,54,55,60,63,62,111,113,19,112,123,ORIGINAL_DATA_ELEMENTS,200" />
+  </participant>
+  &create_tranlog;
+  &select_ds;
+  &create_ds_request;
+  &query_host;
+  &response_enricher;
+  &log_ds_response;
+  &create_ss_response;
+ </group>
+
+ <group name="advices">
+  <participant class="org.jpos.transaction.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="message"   value="SS_REQUEST" />
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN,39,41" />
+   <property name="optional"  value="6,14,15,17,21,22,23,24,25,26,32,33,37,38,39,41,42,43,46,49,54,55,56,60,63,62,111,112,113,19,112,123,ORIGINAL_DATA_ELEMENTS,200,117" />
+  </participant>
+  &create_tranlog;
+  &select_ds;
+  &create_ds_request;
+  &query_host;
+  &response_enricher;
+  &log_ds_response;
+  &create_ss_response;
+ </group>
+
+ <group name="financial">
+  <participant class="org.jpos.transaction.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="message"   value="SS_REQUEST" />
+   <property name="mandatory" value="PCODE,AMOUNT,7,11,12,PAN,22,41" />
+   <property name="optional"  value="5,6,9,10,16,19,23,53,123,17,24,25,26,32,33,36,37,42,43,45,46,52,54,55,59,60,63,111,112,113,200" />
+  </participant>
+  &create_tranlog;
+  &select_ds;
+  &create_ds_request;
+  &query_host;
+  &response_enricher;
+  &log_ds_response;
+  &create_ss_response;
+ </group>
+
+ <group name="financial-refund">
+  <participant class="org.jpos.transaction.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="message"   value="SS_REQUEST" />
+   <property name="mandatory" value="PCODE,7,11,12,AMOUNT, PAN, 41" />
+   <property name="optional"  value="5,6,9,10,16,17,19,22,23,24,25,26,32,33,36,37,42,43,45,46,52,53,54,55,59,60,63,111,112,113,123,200" />
+  </participant>
+  &create_tranlog;
+  &select_ds;
+  &create_ds_request;
+  &query_host;
+  &response_enricher;
+  &log_ds_response;
+  &create_ss_response;
+ </group>
+
+ <group name="clearing">
+  <participant class="org.jpos.transaction.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="message"   value="SS_REQUEST" />
+   <property name="mandatory" value="PCODE,AMOUNT,7,11,12,PAN,41" />
+   <property name="optional"  value="5,6,9,10,15,16,17,19,23,24,25,26,32,33,36,37,38,42,43,45,46,52,53,54,55,59,60,63,111,112,113,123,200" />
+  </participant>
+  &create_tranlog;
+  &select_ds;
+  <participant class="org.jpos.jpts.CreateDSRequest" logger="Q2" realm="create-ds-msg">
+   <property name="checkpoint"   value="create-ds-msg" />
+   <property name="use-incoming-stan"   value="yes" />
+   <property name="sequencers" value="je:sequencers:log/sequencers" />
+   <property name="forward-ss-fields" value="25,38,113" />
+  </participant>
+  &query_host;
+  &response_enricher;
+  &log_ds_response;
+  &create_ss_response;
+ </group>
+
+ <group name="presentation">
+  <participant class="org.jpos.transaction.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="message"   value="SS_REQUEST" />
+   <property name="mandatory" value="PCODE,AMOUNT,7,11,12,PAN,41" />
+   <property name="optional"  value="5,6,9,10,15,16,17,19,23,24,25,26,32,33,36,37,38,42,43,45,46,52,53,54,55,59,60,63,111,112,113,123,200" />
+  </participant>
+  &create_tranlog;
+  &select_ds;
+  <participant class="org.jpos.jpts.CreateDSRequest" logger="Q2" realm="create-ds-msg">
+   <property name="checkpoint"   value="create-ds-msg" />
+   <property name="use-incoming-stan"   value="yes" />
+   <property name="sequencers" value="je:sequencers:log/sequencers" />
+   <property name="forward-ss-fields" value="25,38,113,200" />
+  </participant>
+  &query_host;
+  &response_enricher;
+  &log_ds_response;
+  &create_ss_response;
+ </group>
+
+ <group name="installment-payment-inquiry">
+  <participant class="org.jpos.transaction.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="message"   value="SS_REQUEST" />
+   <property name="mandatory" value="PCODE,7,11,12,PAN,22,41" />
+   <property name="optional"  value="AMOUNT,5,6,15,17,23,24,25,26,32,33,36,37,42,43,45,46,52,54,55,59,60,62,63,111,112,113,123,200" />
+  </participant>
+  &create_tranlog;
+  &select_ds;
+  &create_ds_request;
+  &query_host;
+  &response_enricher;
+  &log_ds_response;
+  &create_ss_response;
+ </group>
+
+ <group name="sendresponse">
+  <participant class="org.jpos.jpts.SendResponse" logger="Q2" realm="sendresponse"/>
+  <participant class="org.jpos.notification.txnmgr.integration.AlertParticipant" logger="Q2" realm="alert-participant"/>
+ </group>
+
+ <group name="close">
+  <participant class="org.jpos.transaction.Close" logger="Q2" realm="close">
+   <property name="checkpoint" value="close" />
+  </participant>
+ </group>
+
+ <participant class="org.jpos.jpts.LogDuration" logger="Q2" realm="log-duration">
+  <property name="checkpoint"  value="log-duration" />
+ </participant>
+
+ <participant class="org.jpos.transaction.ProtectDebugInfo" logger="Q2" realm="protect-debug-info" enabled="${PROTECT_LOG:true}">
+
+  <property name="protect-entry"  value="PAN" />
+  <property name="protect-entry"  value="EXP" />
+  <property name="protect-entry"  value="SS_REQUEST" />
+  <property name="protect-entry"  value="SS_RESPONSE" />
+  <property name="protect-entry"  value="DS_REQUEST" />
+  <property name="protect-entry"  value="DS_RESPONSE" />
+  <property name="protect-entry"  value="NOTIFICATION_REQUEST" />
+  <property name="protect-entry"  value="NOTIFICATION_RESPONSE" />
+  <property name="protect-entry"  value="REQUEST_ICC_DATA" />
+  <property name="protect-entry"  value="RESPONSE_ICC_DATA" />
+
+  <property name="protect-ISOMsg"  value="2" />
+  <property name="protect-ISOMsg"  value="14" />
+  <property name="protect-ISOMsg"  value="35" />
+  <property name="protect-ISOMsg"  value="45" />
+
+  <property name="wipe-ISOMsg"  value="52" />
+  <property name="wipe-ISOMsg"  value="55" />
+
+  <property name="wipe-TLVList"  value="0x56" />
+  <property name="wipe-TLVList"  value="0x57" />
+  <property name="wipe-TLVList"  value="0x5a" />
+  <property name="wipe-TLVList"  value="0x5f20" />
+
+ </participant>
+
+ <frozen-handler>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.DB"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.CardProduct"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.TranLog"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.security.SimpleKeyFile"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.hibernate.Criteria"/>
+ </frozen-handler>
+
+</jpts-txnmgr>

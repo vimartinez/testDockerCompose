@@ -1,0 +1,30 @@
+<sender class="org.jpos.notification.elk.ELKNotificationSender" name="elk-notification-sender">
+    <property name="url" value="${JPOS_ELK_HOST}"/>
+    <property name="user" value="${JPOS_ELK_USER}"/>
+    <property name="password" value="${JPOS_ELK_PASS}"/>
+
+    <converter class="org.jpos.notification.core.converter.NotificationToJsonConverter">
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.DB"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer"
+                    for="com.amazonaws.xray.strategy.ContextMissingStrategy"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer"
+                    for="com.amazonaws.xray.strategy.PrioritizationStrategy"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.internal.IdGenerator"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.contexts.ResolverChain"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.AWSXRayRecorder"/>
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.entities.Entity"/>
+        <!-- TODO there is a error serializing because #bins is not initialized -->
+        <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.CardProduct"/>
+        <serializer class="com.fasterxml.jackson.databind.ser.std.ToStringSerializer" for="java.math.BigDecimal"/>
+        <serializer class="org.jpos.notification.txnmgr.integration.serializer.ProfilerSerializer"/>
+        <serializer class="org.jpos.notification.txnmgr.integration.serializer.TxnMgrNotificationDataSerializer"/>
+    </converter>
+
+    <index-resolver class="org.jpos.notification.elk.ComponentIndexResolver">
+        <property name="index-name" value="${JPOS_NOTIFICATION_TXN_INDEX:jpos-txn-jpts-app}"/>
+        <property name="component" value="jpts-txnmgr"/>
+    </index-resolver>
+    <index-resolver class="org.jpos.notification.elk.DefaultIndexResolver">
+        <property name="index-name" value="${JPOS_NOTIFICATION_DEFAULT_INDEX:jpos-log-jpts-app}"/>
+    </index-resolver>
+</sender>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<logger name="Q2" class="org.jpos.q2.qbean.LoggerAdaptor" enabled="${log_enabled:true}">
+  <property name="redirect" value="stdout, stderr"/>
+  <log-listener class="org.jpos.util.ProtectedLogListener" enabled="${PROTECT_LOG:true}">
+    <property name="protect" value="2 14 35 49.2"/>
+    <property name="wipe"    value="45 52 126" />
+  </log-listener>
+  <log-listener class="org.jpos.util.SimpleLogListener" enabled="${USE_JSON_LOGGING:false}">
+  <writer class="org.jpos.logging.json.JsonLogEventWriter">
+    <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.DB"/>
+    <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.CardProduct"/>
+    <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.TranLog"/>
+    <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.security.SimpleKeyFile"/>
+    <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.hibernate.Criteria"/>
+  </writer>
+  </log-listener>
+  <log-listener class="org.jpos.util.SimpleLogListener" enabled="${USE_XML_LOGGING:true}">
+  </log-listener>
+  <log-listener class="org.jpos.util.BufferedLogListener">
+    <property name="max-size" value="100"/>
+    <property name="name" value="logger.Q2.buffered"/>
+  </log-listener>
+  <log-listener class="org.jpos.util.DailyLogListener">
+    <property name="sleeptime" value="${log_xml_rotation_window:86400}"/> <!-- optional, default one day -->
+    <!--needed-->
+    <property name="prefix" value="log/q2"/>
+    <property name="suffix" value=".log"/> <!-- optional -->
+
+    <!--optional the default is "-yyyy-MM-dd" -->
+    <property name="date-format" value="-yyyy-MM-dd-HH-mm"/>
+    <property name="maxage" value="${log_xml_max_age:0}"/>
+    <property name="delete-regex" value="^q2.+\.log\.gz$"/>
+    <!--optional the default is gzip-->
+    <property name="compression-format" value="gzip"/>
+  </log-listener>
+</logger>

@@ -1,0 +1,4 @@
+<capture-date class="org.jpos.ee.CaptureDate" logger="Q2">
+ <property name="cutover" value="23:59:59" />
+</capture-date>
+
