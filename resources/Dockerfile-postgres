@@ -1,4 +1,0 @@
-FROM postgres:14
-ENV POSTGRES_USER jpos
-ENV POSTGRES_PASSWORD password
-ENV POSTGRES_DB jpts_dev
