@@ -1,0 +1,15 @@
+FROM amazoncorretto:11
+ENV DB_CONN_URL jdbc:postgresql://postgres-db:5432/jpts_dev
+ENV JPTS_CMF_HOST jpts
+ENV AWS_XRAY_CONTEXT_MISSING LOG_ERROR
+ENV JPOS_ELK_HOST https://vpc-prepaid-dev-e2nbrpzj5z2n723imfdm3hsboi.us-east-1.es.amazonaws.com
+ENV JPOS_ELK_PASS X*464jE7
+ENV JPOS_ELK_USER user_app
+ENV JPTS_REMOTE_HOST jpts
+ENV JPTS_REMOTE_PORT 7777
+#USER 1000:1000
+WORKDIR etc
+RUN yum -y install git
+RUN git clone https://github.com/vimartinez/testDockerCompose.git
+RUN chmod -R 777 testDockerCompose
+CMD ["testDockerCompose/ss-visa/bin/q2"]

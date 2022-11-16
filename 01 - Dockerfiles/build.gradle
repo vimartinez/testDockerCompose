@@ -1,0 +1,87 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.5'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'com.prismamp.prepaid'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+//	maven {
+//		url 'http://jpos.org/maven'
+//		allowInsecureProtocol = true
+//	}
+//	maven {
+//		url 'http://download.oracle.com/maven'
+//		allowInsecureProtocol = true
+//	}
+//	maven {
+//		url 'http://maven.vaadin.com/vaadin-addons'
+//		allowInsecureProtocol = true
+//	}
+//	if (isUseNexus()) {
+//		maven {
+//			url "$prismaNexusPublicUrl"
+//			credentials {
+//				username = "$prismaNexusUser"
+//				password = "$prismaNexusPass"
+//			}
+//		}
+//		maven {
+//			url "$prismaNexusReleasesUrl"
+//			credentials {
+//				username = "$prismaNexusUser"
+//				password = "$prismaNexusPass"
+//			}
+//		}
+//	}
+//	mavenLocal()
+}
+
+
+ext {
+	set('testcontainersVersion', "1.17.4")
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.jpos:jpos:2.1.7'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation files('src/main/resources/libs/sim-junit-1.14.0.jar')
+	testImplementation files('src/main/resources/libs/jpos-2.1.8-SNAPSHOT-sources.jar')
+	testImplementation files('src/main/resources/libs/ss-visa-1.14.0.jar')
+	testImplementation files('src/main/resources/libs/jposee-client-simulator-2.2.8-SNAPSHOT.jar')
+	testImplementation files('src/main/resources/libs/jposee-client-simulator-2.2.8-SNAPSHOT-sources.jar')
+//	testImplementation 'org.jpos.ee:jposee-core:2.2.8'
+//	testImplementation 'org.jpos.ee:jposee-client-simulator:2.2.8'
+
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+//private static boolean isUseNexus() {
+//	def nexusEv = System.getenv('USE_NEXUS')
+//	def useNexus = nexusEv == null ? true : nexusEv.toBoolean()
+//	return useNexus
+//}

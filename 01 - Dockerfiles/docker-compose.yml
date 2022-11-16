@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    #  image: postgres:14
+    build:
+      context: .
+      dockerfile: src/main/resources/Dockerfile-postgres
+    ports:
+      - "5432:5432"
+
+  flyway:
+    image: flyway/flyway
+  #  build:
+  #    context: .
+  #   dockerfile: src/main/resources/Dockerfile-flyway
+    command: -url=jdbc:postgresql://postgres-db:5432/jpts_dev -user=jpos -password=password -connectRetries=60 -X info migrate  info
+    volumes:
+      - ../jpts/modules/db-dev/src/main/resources/db/migration:/flyway/sql
+     # - ./resources/db/migration/:/flyway/sql2
+    depends_on:
+      -  postgres-db
+
+  jpts:
+    build:
+      context: .
+      dockerfile: src/main/resources/Dockerfile-jpts
+    depends_on:
+      - flyway
+
+  ss-visa:
+    build:
+      context: .
+      dockerfile: src/main/resources/Dockerfile-ssVisa
+#    ports:
+#      - '11000:11000'
+    depends_on:
+      -  jpts
