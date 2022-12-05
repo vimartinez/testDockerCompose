@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+
+<channel-adaptor name='cli-adaptor' class="org.jpos.q2.iso.ChannelAdaptor" logger="Q2">
+    <channel class="org.jpos.iso.channel.XMLChannel" packager="org.jpos.iso.packager.XMLPackager" realm="jcard-channel"
+             logger="Q2">
+        <property name="packager-config" value="jar:packager/jcard.xml" />
+        <property name="host" value="${JCARD_XML_SERVER_HOST:localhost}"/>
+        <property name="port" value="${JCARD_XML_SERVER_PORT:9000}"/>
+    </channel>
+    <in>cli-send</in>
+    <out>cli-receive</out>
+    <reconnect-delay>10000</reconnect-delay>
+</channel-adaptor>

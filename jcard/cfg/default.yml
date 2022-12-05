@@ -1,0 +1,21 @@
+flyway:
+    table: schema_version
+
+prisma-api:
+        header:
+            issuer: X-Prisma-Issuer
+
+url-service:
+    currency-exchange:
+        host: http://api-prepaidcard-currency-exchange-service-svc.backend.svc.cluster.local
+        port: 8080
+        basePath: /prepaidcard/v1/currency_exchanges
+        conversion: /conversions
+
+currency-exchange:
+    conversion:
+        connection-timeout: 5000
+        read-timeout: 5000
+
+should_use_ssm: false
+jcard_check_cvv2_for_ecommerce_transactions: true

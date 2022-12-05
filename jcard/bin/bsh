@@ -1,0 +1,5 @@
+#!/bin/sh
+cd `dirname $0`/.. || exit 1
+CLASSPATH=classes:$CLASSPATH
+CLASSPATH=`echo jcard-2.2.0.jar lib/*.jar | tr ' ' ':'`:$CLASSPATH
+exec java -cp $CLASSPATH bsh.Interpreter $*

@@ -1,0 +1,6 @@
+cd `dirname $0`/..
+bin/q2 -d nolog --cli <<!
+gltohtml jcard:jcard:840
+shutdown --force
+!
+

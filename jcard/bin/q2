@@ -1,0 +1,18 @@
+#!/bin/sh
+
+cd `dirname $0`/.. || exit 1
+rm -f deploy/shutdown.xml
+java -server \
+    -Dappname=jCard \
+    -Duser.name=admin \
+    -Dcom.sun.management.jmxremote \
+    -Xloggc:log/gc.log \
+    -Dorg.mortbay.xml.XmlParser.NotValidating=true \
+    -Djava.net.preferIPv4Stack=true \
+    -XX:+UseConcMarkSweepGC \
+    -XX:+AggressiveOpts \
+    -XX:+ParallelRefProcEnabled \
+    -XX:+TieredCompilation \
+    -Xmx1G -Xms1G \
+    -jar jcard-2.2.0.jar "$@"
+
