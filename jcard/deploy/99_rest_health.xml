@@ -1,0 +1,8 @@
+<health class="com.prisma.prepaidcard.RestHealthServer" logger="${REST_HEALTH_LOGGER:NO_LOG}"
+        name="health-server">
+    <property name="port" value="${JCARD_HEALTH_CHECK_PORT:15000}"/>
+    <property name="readiness_collectors" value="${JCARD_HEALTH_CHECK_QBEANS_READINESS:server.main-incoming,txnmgr-internal-sor,db,channel.ds-external-sor}"/>
+    <property name="liveness_collectors" value="${JCARD_HEALTH_CHECK_QBEANS_LIVENESS:server.main-incoming,txnmgr-external-sor,txnmgr-internal-sor,channel.ds-external-sor,futurex-excrypt-client}"/>
+    <property name="additional_info_env" value="USE_INTERNAL_SOR,USE_EXTERNAL_SOR,JCARD_ISSUER_NAME"/>
+    <collector class="com.prisma.prepaidcard.collector.DBHealthCollector"/>
+</health>

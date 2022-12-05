@@ -1,0 +1,18 @@
+<channel-adaptor name="channel.ds-external-sor" class="org.jpos.q2.OneShotChannelAdaptorMK2" logger="Q2" enabled="${USE_EXTERNAL_SOR:false}">
+    <channel class="org.jpos.iso.channel.XMLChannel" packager="org.jpos.iso.packager.XMLPackager"
+             realm="ds-external-sor" logger="Q2">
+
+        <property name="host" value="${ds_external_sor_host:localhost}"/>
+        <property name="port" value="${ds_external_sor_port:9100}"/>
+        <property name="timeout" value="${ds_external_sor_timeout:5000}"/>
+        <property name="connect-timeout" value="${ds_external_sor_timeout:1000}"/>
+        <property name="packager-logger" value="${channel_logger:Q2}"/>
+        <property name="packager-realm" value="channel.ds-external-sor"/>
+    </channel>
+
+    <max-connections>${JCARD_ESOR_CHANNEL_MAX_CON:100}</max-connections>
+    <in>ds-external-sor-send</in>
+    <out>ds-external-sor-receive</out>
+    <reconnect-delay>${reconnect_delay:1000}</reconnect-delay>
+
+</channel-adaptor>

@@ -1,0 +1,9 @@
+<cron class="org.jpos.q2.QuartzAdaptor" logger="Q2">
+  <job id="1" class="org.jpos.jcard.batch.ExpireUnsettledAuths" when="0 0 1 * * ?"
+       logger="Q2" realm="job-expire-unsettled-authds">
+    <property name="days" value="90" />
+    <property name="queue" value="JCARD.TXN" />
+  </job>
+    
+</cron>
+

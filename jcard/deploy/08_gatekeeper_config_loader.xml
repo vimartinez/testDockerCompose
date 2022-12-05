@@ -1,0 +1,4 @@
+<qbean name="gatekeeper-provider" class="org.jpos.jcard.gatekeeper.GatekeeperRulesProvider" logger="Q2">
+    <property name="reload-every-minutes" value="${GATEKEEPER_RELOAD_TIME:5}" />
+</qbean>
+

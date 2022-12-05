@@ -1,0 +1,6 @@
+<flyway class="org.jpos.flyway.FlywayService" logger="Q2">
+    <commands>
+        info
+    </commands>
+</flyway>
+

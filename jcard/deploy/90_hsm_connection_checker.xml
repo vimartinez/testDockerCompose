@@ -1,0 +1,3 @@
+<qbean name="sm-connection-checker" class="org.jpos.jcard.sm.SMConnectionChecker" logger="Q2">
+  <property name="timeout" value="300000" />
+</qbean>

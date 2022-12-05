@@ -1,0 +1,4 @@
+<mux class="org.jpos.q2.iso.QMUX" logger="${channel_logger:Q2}" name="ds-external-sor" enabled="${USE_EXTERNAL_SOR:false}">
+    <in>ds-external-sor-receive</in>
+    <out>ds-external-sor-send</out>
+</mux>

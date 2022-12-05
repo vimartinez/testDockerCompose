@@ -1,0 +1,7 @@
+<cron class="org.jpos.q2.QuartzAdaptor" logger="Q2" name="cron-oct">
+  <job id="2" class="org.jpos.jcard.batch.OCTConfirmation" when="${oct_job_run:0 */30 * ? * *}"
+       logger="Q2" realm="job-oct-confirmation">
+    <property name="minutes" value="${oct_completion_time:30}"/>
+    <property name="queue" value="JCARD.TXN" />
+  </job>
+</cron>

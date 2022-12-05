@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<server name="server.main-incoming" class="org.jpos.q2.iso.QServer" logger="Q2">
+  <attr name="port" type="java.lang.Integer">${JCARD_XML_SERVER_PORT:9000}</attr>
+  <attr name="maxSessions" type="java.lang.Integer">${MAX_SESSIONS_CMF_SERVER:100}</attr>
+  <channel name="jcard.channel" class="org.jpos.iso.channel.XMLChannel" packager="org.jpos.iso.packager.XML2003Packager"
+           logger="Q2">
+    <property name="timeout" value="300000"/>
+  </channel>
+  <request-listener class="org.jpos.jcard.Dispatcher" logger="Q2" realm="incoming-request-listener">
+   <property name="prefix"  value="org.jpos.jcard.Incoming_" />
+   <property name="timeout" value="60000" />
+   <property name="space"   value="tspace:default" />
+   <property name="queue"   value="JCARD.TXN" />
+   <property name="station"   value="JCARD.XML" />
+  </request-listener>
+</server>
+

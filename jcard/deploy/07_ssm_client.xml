@@ -1,0 +1,5 @@
+<qbean name="ssm-client" class="org.jpos.jcard.sm.client.SSMClient" logger="Q2">
+  <property name="shouldUseSSM" value="${SHOULD_USE_SSM:false}" />
+  <property name="lmk" value="cfg/test.lmk" />
+</qbean>
+

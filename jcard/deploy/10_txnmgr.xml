@@ -1,0 +1,2255 @@
+<?xml version="1.0" standalone="yes" ?>
+
+<!DOCTYPE txnmgr [
+        <!ENTITY KID "dek.001">
+        <!ENTITY authorization SYSTEM "authorization.inc">
+        <!ENTITY authorization_esor SYSTEM "authorization_esor.inc">
+        <!ENTITY pending_credit SYSTEM "pending_credit.inc">
+        <!ENTITY pending_credit_esor SYSTEM "pending_credit_esor.inc">
+        <!ENTITY oct SYSTEM "oct.inc">
+        <!ENTITY oct_esor SYSTEM "oct_esor.inc">
+        <!ENTITY refund SYSTEM "refund.inc">
+        <!ENTITY refund_esor SYSTEM "refund_esor.inc">
+        <!ENTITY void SYSTEM "void.inc">
+        <!ENTITY void_esor SYSTEM "void_esor.inc">
+        <!ENTITY completion SYSTEM "completion.inc">
+        <!ENTITY completion_esor SYSTEM "completion_esor.inc">
+        <!ENTITY reversal SYSTEM "reversal.inc">
+        <!ENTITY reversal_esor SYSTEM "reversal_esor.inc">
+        <!ENTITY balance SYSTEM "balance.inc">
+        <!ENTITY balance_esor SYSTEM "balance_esor.inc">
+        <!ENTITY partial_reversal SYSTEM "partial_reversal.inc">
+        <!ENTITY partial_reversal_esor SYSTEM "partial_reversal_esor.inc">
+        <!ENTITY financial SYSTEM "financial.inc">
+        <!ENTITY financial_esor SYSTEM "financial_esor.inc">
+        <!ENTITY financial_refund SYSTEM "financial_refund.inc">
+        <!ENTITY financial_refund_esor SYSTEM "financial_refund_esor.inc">
+        <!ENTITY financial_deposit SYSTEM "financial_deposit.inc">
+        <!ENTITY financial_deposit_esor SYSTEM "financial_deposit_esor.inc">
+        <!ENTITY force_post SYSTEM "force_post.inc">
+        <!ENTITY force_post_refund SYSTEM "force_post_refund.inc">
+        ]>
+
+<txnmgr name="txnmgr-internal-sor"
+        class="org.jpos.notification.txnmgr.integration.TransactionManagerWithNotification"
+        logger="Q2" xmlns="">
+ <property name="queue" value="JCARD.TXN" />
+ <property name="sessions" value="40" />
+ <property name="max-sessions" value="${MAX_SESSIONS_TXNMGR:128}" />
+ <property name="debug" value="true" />
+ <property name="xray-iso-response" value="RESPONSE" />
+ <property name="notification-sender" value="elk-notification-sender"/>
+
+ <participant class="org.jpos.aws.xray.XRayTxNameBeginReportParticipant" logger="Q2" realm="xray">
+  <property name="segment_name" value="jcard" />
+  <property name="wrap-db" value="false" />
+  <property name="REQUEST" value="REQUEST" />
+ </participant>
+
+
+ <participant class="org.jpos.jcard.PrepareContext" logger="Q2" realm="prepare-context">
+  <property name="trace" value="false" />
+  <property name="timeout" value="30000" />
+ </participant>
+ <participant class="org.jpos.transaction.Open" logger="Q2" realm="open">
+  <property name="checkpoint" value="open" />
+  <property name="timeout" value="300" />
+ </participant>
+ <participant class="org.jpos.jcard.CheckVersion" logger="Q2" realm="check-version">
+  <property name="valid-versions" value="106" />
+ </participant>
+ <!-- Authorization -->
+ <participant class="org.jpos.jcard.Switch" logger="Q2" realm="Switch">
+  <property name="100.30"
+            value="balanceinquiry prepareresponse logit close sendresponse" />
+  <property name="100.30.00"
+            value="balanceinquiry prepareresponse logit close sendresponse" />
+  <property name="100.30.02"
+            value="balanceinquiry prepareresponse logit close sendresponse" />
+  <property name="100.30.2900"
+            value="balanceinquiry prepareresponse logit close sendresponse" />
+  <property name="100.30.182"
+            value="customer-balanceinquiry prepareresponse logit close sendresponse" />
+  <property name="100.39.00"
+            value="installment-payment-inquiry prepareresponse logit close sendresponse" />
+  <property name="100.00"
+            value="authorization prepareresponse logit close sendresponse" />
+  <property name="100.00.00"
+            value="authorization prepareresponse logit close sendresponse" />
+  <property name="101.00.1377"
+            value="moto-retransmission prepareresponse logit close sendresponse" />
+  <property name="100.00.5206"
+            value="deferred-authorization prepareresponse logit close sendresponse" />
+  <property name="100.00.181"
+            value="authorization prepareresponse logit close sendresponse" />
+  <property name="100.00.181.00"
+            value="authorization prepareresponse logit close sendresponse" />
+  <property name="100.00.181.2900"
+            value="subsequent-authorization prepareresponse logit close sendresponse" />
+  <!--For moto auth, mail, telephone, recurring, advance or installment order-->
+  <property name="100.00.1377"
+            value="authorization prepareresponse logit close sendresponse" />
+  <!--Ecommerce request through public network-->
+  <property name="100.00.1378"
+            value="authorization prepareresponse logit close sendresponse" />
+  <!--Ecommerce Payment Facilitators, and Qualified and Registered Marketplaces-->
+  <property name="100.00.1381"
+            value="authorization prepareresponse logit close sendresponse" />
+  
+  <property name="100.00.185"
+            value="authorization prepareresponse logit close sendresponse" />
+
+  <!--Ecommerce account verification -->
+  <property name="100.00.51"
+            value="authorization prepareresponse logit close sendresponse" />
+  <!-- ATM -->
+  <property name="100.01"
+            value="authorization prepareresponse logit close sendresponse" />
+  <property name="100.01.00"
+            value="authorization prepareresponse logit close sendresponse" />
+  <property name="100.01.02"
+            value="authorization prepareresponse logit close sendresponse" />
+  <property name="100.02"
+            value="auth-void prepareresponse logit close sendresponse" />
+  <property name="100.00.3903"
+            value="re-authorization prepareresponse logit close sendresponse" />
+  <property name="100.00.2900"
+            value="subsequent-authorization prepareresponse logit close sendresponse" />
+  <property name="100.00.3901"
+            value="resubmission prepareresponse logit close sendresponse" />
+  <property name="100.01.00"
+            value="authorization prepareresponse logit close sendresponse" />
+  <property name="100.01.02"
+            value="authorization prepareresponse logit close sendresponse" />
+
+  <property name="100.09.181"
+            value="authorization prepareresponse logit close sendresponse" />
+
+  <!-- Visa Direct -->
+  <property name="100.10.00"
+            value="visa-direct-aft prepareresponse logit close sendresponse" />
+  <property name="100.10.1378"
+            value="visa-direct-aft prepareresponse logit close sendresponse" />
+  <property name="100.10.1381"
+            value="visa-direct-aft prepareresponse logit close sendresponse" />
+  <property name="100.10.1382"
+            value="visa-direct-aft prepareresponse logit close sendresponse" />
+  <property name="100.10.05"
+            value="visa-direct-aft prepareresponse logit close sendresponse" />
+
+  <property name="100.26.05"
+            value="visa-direct-oct prepareresponse logit close sendresponse" />
+  <property name="100.26.1381"
+            value="visa-direct-oct prepareresponse logit close sendresponse" />
+  <property name="100.26.1378"
+            value="visa-direct-oct prepareresponse logit close sendresponse" />
+  <property name="100.26.1380"
+            value="visa-direct-oct prepareresponse logit close sendresponse" />
+
+  <property name="100.00.1382"
+            value="visa-direct-aft prepareresponse logit close sendresponse" />
+
+  <!-- Prepaid Load Activate  -->
+  <property name="100.28.00"
+            value="prepaid-custom prepareresponse logit close sendresponse" />
+  <property name="100.72.00"
+            value="prepaid-custom prepareresponse logit close sendresponse" />
+
+  <!-- cash back -->
+  <property name="100.09"
+            value="authorization prepareresponse logit close sendresponse" />
+  <property name="100.20"
+            value="pending-credit prepareresponse logit close sendresponse" />
+  <property name="100.20.00"
+            value="pending-credit prepareresponse logit close sendresponse" />
+  <property name="100.20.1379"
+            value="pending-credit prepareresponse logit close sendresponse" />
+  <property name="100.22"
+            value="refund-void prepareresponse logit close sendresponse" />
+  <property name="100.00.201"
+            value="auth-adjustment prepareresponse logit close sendresponse" />
+  
+  <!-- Account Status Inquiry for Payment Transaction - Mastercard -->
+  <property name="100.20.113"
+            value="verification prepareresponse logit close sendresponse" />
+  <property name="100.00.113"
+            value="verification prepareresponse logit close sendresponse" />
+
+<!--  Account verification-->
+  <property name="100.00.113.51"
+            value="verification prepareresponse logit close sendresponse" />
+  <property name="100.00.113.4444"
+            value="customer-identification prepareresponse logit close sendresponse" />
+
+  <property name="200.00"
+            value="financial prepareresponse logit close sendresponse" />
+  <property name="200.01"
+            value="financial prepareresponse logit close sendresponse" />
+  <property name="200.02"
+            value="purchase-void prepareresponse logit close sendresponse" />
+  <property name="200.20"
+            value="financial-refund prepareresponse logit close sendresponse" />
+  <property name="200.20.00"
+            value="financial-refund prepareresponse logit close sendresponse" />
+  <property name="200.21"
+            value="financial-deposit prepareresponse logit close sendresponse" />
+  <property name="200.22"
+            value="financial-refund-void prepareresponse logit close sendresponse" />
+
+  <property name="220.00.0000"
+            value="completion prepareresponse logit close sendresponse" />
+  <property name="220.00.1000"
+            value="force-post prepareresponse logit close sendresponse" />
+  <property name="220.00.2000"
+            value="force-post prepareresponse logit close sendresponse" />
+  <property name="220.20.1000"
+            value="refund-force-post prepareresponse logit close sendresponse" />
+  <property name="220.20.4500"
+            value="refund-force-post prepareresponse logit close sendresponse" />
+  <property name="220.40.182"
+            value="account-to-account-transfer prepareresponse logit close sendresponse" />
+  <property name="221.40.182"
+            value="account-to-account-transfer-repeat prepareresponse logit close sendresponse" />
+  <property name="220.26.0000"
+            value="oct-completion prepareresponse logit close sendresponse" />
+
+  <!-- PRESENTATIONS -->
+  <property name="240.00.0000"
+            value="presentation prepareresponse logit close sendresponse" />
+  <property name="240.00.200"
+            value="presentation prepareresponse logit close sendresponse" />
+  <property name="240.01.200"
+            value="presentation prepareresponse logit close sendresponse" />
+  <property name="240.20.0000"
+            value="refund-presentation prepareresponse logit close sendresponse" />
+  <property name="240.20.000"
+            value="refund-presentation prepareresponse logit close sendresponse" />
+  <property name="240.20.200"
+            value="refund-presentation prepareresponse logit close sendresponse" />
+
+  <!-- Reversal -->
+
+
+  <property name="400.00" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.00.0000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.00.185.4000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.00.4000" value="customer-void prepareresponse logit close sendresponse" />
+  <property name="400.00.4021" value="reversal-moto prepareresponse logit close sendresponse" />
+  <property name="400.00.5600" value="partial-reversal prepareresponse logit close sendresponse" />
+  <property name="400.01.0000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.01.4000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.02.0000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.10.4000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.20.0000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.20.4000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.21.0000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.28.4000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.30.0000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.40.0000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.72.4000" value="reversal prepareresponse logit close sendresponse" />
+  <property name="400.00.181" value="partial-reversal prepareresponse logit close sendresponse" />
+
+  <!-- Advices -->
+  <property name="120.00.00" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="120.00.1000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="120.01.1000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="120.26.05" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="120.39.00" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="120.01.00" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="120.00.1377" value="advice-handler prepareresponse logit close sendresponse" />
+
+ <!--  AFD Advice for Mastercard -->
+  <property name="120.00.185" value="advice-handler prepareresponse logit close sendresponse" />
+  
+  <property name="420.00" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.20" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.00.0000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.00.4000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.00.4021" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.00.5600" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.01.0000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.01.4000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.02.0000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.10.4000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.20.0000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.20.4000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.21.0000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.28.4000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.40.0000" value="advice-handler prepareresponse logit close sendresponse" />
+  <property name="420.72.4000" value="advice-handler prepareresponse logit close sendresponse" />
+  
+  <property name="unknown"
+            value="notsupported prepareresponse close sendresponse" />
+ </participant>
+ <participant class="org.jpos.jcard.ProtectDebugInfo" logger="Q2" realm="ProtectDebug" />
+ <participant class="org.jpos.transaction.Debug" logger="Q2" realm="debug" />
+
+ <group name="notsupported">
+  <participant class="org.jpos.jcard.NotSupported" logger="Q2"
+               realm="not-supported" />
+ </group>
+
+ <group name="resubmission">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,18,21,22,23,24,26,32,37,42,43,46,49,54,55,60,63,62,111,113,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.SaveTCC"
+               logger="Q2" realm="save-tcc" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint"   value="check-acquirer" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal">
+   <property name="checkpoint"   value="check-terminal" />
+  </participant>
+
+  <participant class="org.jpos.jcard.CheckDuplicate">
+   <property name="check-duplicate" value="true" />
+   <property name="check-rrn" value="true" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckPreviousReverse"
+               logger="Q2" realm="check-previous-reverse">
+   <property name="checkpoint"   value="check-previous-reverse" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckOriginalTransaction" logger="Q2" realm="CheckOriginalTransaction">
+   <property name="rc" value="not.sufficient.funds" />
+  </participant>
+  <!--  TODO verify if exist previous resubmission / Podemos repetir un reenvio-->
+  <participant class="org.jpos.jcard.ValidateResubmission" logger="Q2" realm="check-resubmission"/>
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity">
+   <property name="checkpoint"  value="check-velocity" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.CheckInstallments" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="200.03" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerChannel" logger="Q2" realm="check-channel-usage-limit"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerMcc" logger="Q2" realm="check-usage-limit-mcc"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerCountry"
+               logger="Q2" realm="check-usage-limit-per-country" />
+  <participant class="org.jpos.jcard.CheckUsageLimitPerTcc"
+               logger="Q2" realm="check-usage-limit-per-tcc" />
+
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &authorization;
+  &authorization_esor;
+ </group>
+
+ <group name="re-authorization">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,21,22,23,24,26,32,37,42,43,46,49,60,63,62,111,113,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckInstallments" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="200.03" />
+  </participant>
+  <participant class="org.jpos.jcard.sm.CheckCVV2" logger="Q2" realm="check-cvv2"/>
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.SaveTCC"
+               logger="Q2" realm="save-tcc" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal">
+   <property name="checkpoint"   value="check-terminal" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCardOnFile" logger="Q2" realm="UncheckOriginalTransaction"/>
+  <participant class="org.jpos.jcard.CheckDuplicate">
+   <property name="check-duplicate" value="true" />
+   <property name="check-rrn" value="true" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint"   value="check-acquirer" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerChannel" logger="Q2" realm="check-usage-limit-channel"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerMcc" logger="Q2" realm="check-usage-limit-mcc"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerCountry"
+               logger="Q2" realm="check-usage-limit-per-country" />
+  <participant class="org.jpos.jcard.CheckUsageLimitPerTcc"
+               logger="Q2" realm="check-usage-limit-per-tcc" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckPreviousReverse"
+               logger="Q2" realm="check-previous-reverse">
+   <property name="checkpoint"   value="check-previous-reverse" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity">
+   <property name="checkpoint"  value="check-velocity" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &authorization;
+  &authorization_esor;
+ </group>
+
+ <group name="subsequent-authorization">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN,41,200" />
+   <property name="optional"  value="6,15,17,21,22,23,24,25,26,32,33,37,42,43,46,49,52,60,63,62,111,113,19,112,123,ORIGINAL_DATA_ELEMENTS,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.SaveTCC"
+               logger="Q2" realm="save-tcc" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckDuplicate">
+   <property name="check-duplicate" value="true"/>
+   <property name="check-rrn" value="true"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckAcquirer" logger="Q2" realm="checkacquirer">
+   <property name="checkpoint" value="check-acquirer"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit" logger="Q2" realm="check-cashback-limit">
+   <property name="checkpoint" value="check-cashback-limit"/>
+  </participant>
+  <participant class="org.jpos.jcard.SelectAccount" logger="Q2" realm="select-account">
+   <property name="checkpoint" value="select-account"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerChannel" logger="Q2" realm="check-channel-usage-limit"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerMcc" logger="Q2" realm="check-usage-limit-mcc"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerCountry"
+               logger="Q2" realm="check-usage-limit-per-country" />
+  <participant class="org.jpos.jcard.CheckUsageLimitPerTcc"
+               logger="Q2" realm="check-usage-limit-per-tcc" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckPreviousReverse" logger="Q2" realm="check-previous-reverse">
+   <property name="checkpoint" value="check-previous-reverse"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckVelocity" logger="Q2" realm="checkvelocity">
+   <property name="checkpoint" value="check-velocity"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckCardOnFile" logger="Q2" realm="UncheckOriginalTransaction"/>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  &authorization;
+  &authorization_esor;
+
+ </group>
+
+ <group name="advice-handler">
+  <participant class="org.jpos.jcard.CheckNotificationAdvice" logger="Q2" realm="check-notification-advice">
+  </participant>
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41, ORIGINAL_DATA_ELEMENTS" />
+   <property name="optional"  value="2,6,14,15,17,21,22,23,24,25,26,32,33,37,38,39,42,43,46,49,55,60,62,63,111,112,113,117,123,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="window" value="259200" />
+   <property name="fields" value="stan, amount, currency, card, original-tx-timestamp" />
+   <property name="original-itc" value="100.00,100.39" />
+  </participant>
+  <participant class="org.jpos.jcard.GetPDCFormOriginal" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.AdviceHandler"
+               logger="Q2" realm="advice-handler" />
+ </group>
+
+ <group name="customer-void">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41, ORIGINAL_DATA_ELEMENTS" />
+   <property name="optional"  value="6,15,17,21,22,23,24,25,26,32,37,38,39,42,43,46,54,55,60,62,63,111,112,113,123,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="window" value="259200" />
+   <property name="fields" value="stan, amount, currency, card, original-tx-timestamp" />
+   <property name="original-itc" value="100.00" />
+  </participant>
+  <participant class="org.jpos.jcard.GetPDCFormOriginal" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  &void;
+  &void_esor;
+
+ </group>
+
+ <group name="reversal-moto">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41, ORIGINAL_DATA_ELEMENTS" />
+   <property name="optional"  value="6,15,17,21,22,23,24,25,26,30,32,37,38,42,43,46,60,62,63,111,112,113,123,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.ValidReasonCode"
+               logger="Q2" realm="valid-moto-reason-code">
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="window" value="259200" />
+   <property name="fields" value="stan, amount, currency, card, original-tx-timestamp" />
+   <property name="original-itc" value="100.00" />
+  </participant>
+  <participant class="org.jpos.jcard.GetPDCFormOriginal" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  &reversal;
+  &reversal_esor;
+ </group>
+
+ <group name="moto-retransmission">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,18,21,22,23,24,26,32,37,42,43,46,49,60,63,62,111,113,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+
+
+  <participant class="org.jpos.jcard.CheckInstallments" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="200.03" />
+  </participant>
+
+  <participant class="org.jpos.jcard.sm.CheckCVV2" logger="Q2" realm="check-cvv2"/>
+  <participant class="org.jpos.jcard.CheckCAVV" logger="Q2" realm="check-cavv" />
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.SaveTCC"
+               logger="Q2" realm="save-tcc" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal">
+   <property name="checkpoint"   value="check-terminal" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckDuplicate">
+   <property name="check-duplicate" value="true" />
+   <property name="check-rrn" value="true" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckOriginalTransaction" logger="Q2" realm="CheckOriginalTransaction"/>
+  <participant class="org.jpos.jcard.ValidateRetransmission" logger="Q2" realm="validate-retransmission" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint"   value="check-acquirer" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerChannel" logger="Q2" realm="check-channel-usage-limit"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerMcc" logger="Q2" realm="check-usage-limit-mcc"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerCountry"
+               logger="Q2" realm="check-usage-limit-per-country" />
+  <participant class="org.jpos.jcard.CheckUsageLimitPerTcc"
+               logger="Q2" realm="check-usage-limit-per-tcc" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckPreviousReverse"
+               logger="Q2" realm="check-previous-reverse">
+   <property name="checkpoint"   value="check-previous-reverse" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity">
+   <property name="checkpoint"  value="check-velocity" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &authorization;
+  &authorization_esor;
+
+ </group>
+
+ <group name="partial-reversal">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN,41,200" />
+   <property name="optional"  value="6,15,17,21,22,23,24,25,26,30,32,37,42,43,46,54,60,63,62,111,113,200,19,112,123,ORIGINAL_DATA_ELEMENTS" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="window" value="259200" /> <!-- change value only for testing purposes -->
+   <property name="fields" value="stan, amount, currency, card, original-tx-timestamp" />
+   <property name="original-itc" value="100,200" />
+  </participant>
+  <participant class="org.jpos.jcard.GetPDCFormOriginal" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &partial_reversal;
+  <!--  TODO check if necessary created new participant-->
+  &partial_reversal_esor;
+ </group>
+
+ <group name="balanceinquiry">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12,AMOUNT,PAN,41" />
+   <property name="optional"  value="2,6,14,15,17,21,22,23,24,25,26,32,37,42,43,46,52,55,60,62,63,111,112,113,123,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.sm.CheckICC" logger="Q2" realm="check-icc"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVAmount" logger="Q2" realm="check-emv-amount" enabled="${CHECK_EMV_AMOUNT:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVCountry" logger="Q2" realm="check-emv-country" enabled="${CHECK_EMV_COUNTRY:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVTimestamp" enabled="${CHECK_EMV_TIMESTAMP:true}" logger="Q2" realm="check-emv-timestamp"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTransactionType" enabled="${CHECK_EMV_TXN_TYPE:true}" logger="Q2" realm="check-emv-txn-type"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTVR" enabled="${CHECK_EMV_TVR:true}" logger="Q2" realm="check-emv-tvr"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVRandomNumber" logger="Q2" realm="check-emv-random-number" enabled="${CHECK_EMV_RANDOM_NUMBER:true}" />
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckATC" logger="Q2" realm="check-atc" enabled="${CHECK_ATC_ENABLED:true}"/>
+  <participant class="org.jpos.jcard.CheckComplianceValidations" logger="Q2" realm="check-compliance-validations">
+   <property name="check_cvv2_for_ecommerce" value="${jcard_check_cvv2_for_ecommerce_transactions:true}"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckPIN" logger="Q2" realm="check-pin">
+   <property name="checkpoint"   value="check-pin" />
+  </participant>
+
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &balance;
+  &balance_esor;
+
+  <participant class="org.jpos.jcard.BalanceInquiry"
+               logger="Q2" realm="balance-inquiry" />
+  <participant class="org.jpos.jcard.sm.PrepareICCResponse" logger="Q2" realm="response-icc"/>
+ </group>
+
+ <group name="customer-balanceinquiry">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12,AMOUNT,PAN,41" />
+   <property name="optional"  value="6,15,17,21,22,23,24,26,32,37,42,43,46,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCustomer"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &balance;
+  &balance_esor;
+
+  <participant class="org.jpos.jcard.BalanceInquiry"
+               logger="Q2" realm="balance-inquiry"  enabled="${USE_INTERNAL_SOR:true}"/>
+ </group>
+
+ <group name="installment-payment-inquiry">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12,AMOUNT,PAN,41" />
+   <property name="optional"  value="2,6,14,15,17,21,22,24,25,26,32,37,42,43,46,52,55,60,62,63,111,112,113,123,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckInstallments" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="200.03" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckPIN" logger="Q2" realm="check-pin">
+   <property name="checkpoint"   value="check-pin" />
+  </participant>
+
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account" />
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  <participant class="org.jpos.jcard.InstallmentPayment"
+               logger="Q2" realm="installment-payment"/>
+ </group>
+
+ <group name="verification">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,18,21,22,23,24,26,32,33,37,42,43,46,49,54,55,60,63,62,111,113,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2" realm="create-tranlog">
+   <property name="capture-date" value="capture-date"/>
+   <property name="checkpoint" value="create-tranlog"/>
+   <property name="node" value="01"/>
+  </participant>
+  <participant class="org.jpos.jcard.sm.CheckICC" logger="Q2" realm="check-icc"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVAmount" logger="Q2" realm="check-emv-amount" enabled="${CHECK_EMV_AMOUNT:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVCountry" logger="Q2" realm="check-emv-country" enabled="${CHECK_EMV_COUNTRY:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVTimestamp" enabled="${CHECK_EMV_TIMESTAMP:true}" logger="Q2" realm="check-emv-timestamp"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTransactionType" enabled="${CHECK_EMV_TXN_TYPE:true}" logger="Q2" realm="check-emv-txn-type"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTVR" enabled="${CHECK_EMV_TVR:true}" logger="Q2" realm="check-emv-tvr"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVRandomNumber" logger="Q2" realm="check-emv-random-number" enabled="${CHECK_EMV_RANDOM_NUMBER:true}" />
+  <participant class="org.jpos.jcard.sm.CheckCVV2" logger="Q2" realm="check-cvv2"/>
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckComplianceValidations" logger="Q2" realm="check-compliance-validations">
+   <property name="check_cvv2_for_ecommerce" value="${jcard_check_cvv2_for_ecommerce_transactions:true}"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal">
+   <property name="checkpoint" value="check-terminal"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint" value="check-acquirer"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" name="checkpoint" realm="select-account">
+   <property name="checkpoint" value="select-account"/>
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  <!--  TODO check if necessary implement this transaction for ESOR -->
+  <participant class="org.jpos.jcard.AccountVerification" logger="Q2" realm="account-verification" />
+  <participant class="org.jpos.jcard.sm.PrepareICCResponse" logger="Q2" realm="response-icc"/>
+ </group>
+
+ <group name="authorization">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,18,21,22,23,24,26,32,33,37,42,43,46,49,52,54,55,60,63,62,111,113,117,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.AdditionalAmountsResolver" logger="Q2" realm="additional-amounts-resolver">
+   <property name="checkpoint"   value="additional-amounts-resolver" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckInstallments" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="200.03" />
+  </participant>
+  <participant class="org.jpos.jcard.sm.CheckICC" logger="Q2" realm="check-icc"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVAmount" logger="Q2" realm="check-emv-amount" enabled="${CHECK_EMV_AMOUNT:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVCountry" logger="Q2" realm="check-emv-country" enabled="${CHECK_EMV_COUNTRY:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVTimestamp" enabled="${CHECK_EMV_TIMESTAMP:true}" logger="Q2" realm="check-emv-timestamp"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTransactionType" enabled="${CHECK_EMV_TXN_TYPE:true}" logger="Q2" realm="check-emv-txn-type"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTVR" enabled="${CHECK_EMV_TVR:true}" logger="Q2" realm="check-emv-tvr"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVRandomNumber" logger="Q2" realm="check-emv-random-number" enabled="${CHECK_EMV_RANDOM_NUMBER:true}" />
+  <participant class="org.jpos.jcard.sm.CheckCVV2" logger="Q2" realm="check-cvv2"/>
+  <participant class="org.jpos.jcard.CheckCAVV" logger="Q2" realm="check-cavv" />
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.SaveTCC"
+               logger="Q2" realm="save-tcc" />
+  <participant class="org.jpos.jcard.CheckATC" logger="Q2" realm="check-atc"  enabled="${CHECK_ATC_ENABLED:true}"/>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckComplianceValidations" logger="Q2" realm="check-compliance-validations">
+   <property name="check_cvv2_for_ecommerce" value="${jcard_check_cvv2_for_ecommerce_transactions:true}"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckPIN" logger="Q2" realm="check-pin">
+   <property name="checkpoint"   value="check-pin" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal">
+   <property name="checkpoint"   value="check-terminal" />
+  </participant>
+  <!--look for retransmission-->
+  <participant class="org.jpos.jcard.CheckOriginalTransaction" logger="Q2" realm="CheckOriginalTransaction">
+   <property name="fail-on-missing"   value="false" />
+  </participant>
+  <participant class="org.jpos.jcard.ValidateRetransmission" logger="Q2" realm="validate-retransmission" />
+  <!--look for retansmission-->
+  <participant class="org.jpos.jcard.CheckDuplicate">
+   <property name="check-duplicate" value="true" />
+   <property name="check-rrn" value="true" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint"   value="check-acquirer" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.PurchaseAmountOnlySupport"
+               logger="Q2" realm="purchase-amount-only-support"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerChannel" logger="Q2" realm="check-channel-usage-limit"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerMcc" logger="Q2" realm="check-usage-limit-mcc"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerCountry"
+               logger="Q2" realm="check-usage-limit-per-country" />
+  <participant class="org.jpos.jcard.CheckUsageLimitPerTcc"
+               logger="Q2" realm="check-usage-limit-per-tcc" />
+  <participant class="org.jpos.jcard.CheckAgriculturalTransaction" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="117" />
+  </participant>
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckPreviousReverse"
+               logger="Q2" realm="check-previous-reverse">
+   <property name="checkpoint"   value="check-previous-reverse" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity">
+   <property name="checkpoint"  value="check-velocity" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCanPartialAuthorization"
+               logger="Q2" realm="check-can-partial-authorization">
+   <property name="checkpoint"   value="check-can-partial-authorization" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  <participant class="org.jpos.jcard.CheckFallback" logger="Q2" realm="checkfallback"/>
+  <!--  TODO ADD support to partial authorization for international transactions-->
+
+  &authorization;
+  &authorization_esor;
+
+  <participant class="org.jpos.jcard.sm.PrepareICCResponse" logger="Q2" realm="response-icc"/>
+ </group>
+
+ <group name="deferred-authorization">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,18,21,22,23,24,26,32,37,42,43,46,49,54,55,60,63,62,111,113,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckInstallments" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="200.03" />
+  </participant>
+  <participant class="org.jpos.jcard.sm.CheckICC" logger="Q2" realm="check-icc">
+   <!--   TODO use hsm-->
+   <!--   TODO Do not validate Application Transaction Counter and Cryptogram Date values-->
+   <property name="use-hsm" value="false"/>
+  </participant>
+  <participant class="org.jpos.jcard.sm.CheckEMVAmount" logger="Q2" realm="check-emv-amount" enabled="${CHECK_EMV_AMOUNT:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVCountry" logger="Q2" realm="check-emv-country" enabled="${CHECK_EMV_COUNTRY:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVTimestamp" enabled="${CHECK_EMV_TIMESTAMP:true}" logger="Q2" realm="check-emv-timestamp"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTransactionType" enabled="${CHECK_EMV_TXN_TYPE:true}" logger="Q2" realm="check-emv-txn-type"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTVR" enabled="${CHECK_EMV_TVR:true}" logger="Q2" realm="check-emv-tvr"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVRandomNumber" logger="Q2" realm="check-emv-random-number" enabled="${CHECK_EMV_RANDOM_NUMBER:true}" />
+  <participant class="org.jpos.jcard.sm.CheckCVV2" logger="Q2" realm="check-cvv2"/>
+  <participant class="org.jpos.jcard.CheckCAVV" logger="Q2" realm="check-cavv" />
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.SaveTCC"
+               logger="Q2" realm="save-tcc" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+
+  <participant class="org.jpos.jcard.CheckComplianceValidations" logger="Q2" realm="check-compliance-validations">
+   <property name="check_cvv2_for_ecommerce" value="${jcard_check_cvv2_for_ecommerce_transactions:true}"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal">
+   <property name="checkpoint"   value="check-terminal" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckDuplicate">
+   <property name="check-duplicate" value="true" />
+   <property name="check-rrn" value="true" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint"   value="check-acquirer" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerChannel" logger="Q2" realm="check-channel-usage-limit"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerMcc" logger="Q2" realm="check-usage-limit-mcc"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerCountry"
+               logger="Q2" realm="check-usage-limit-per-country" />
+  <participant class="org.jpos.jcard.CheckUsageLimitPerTcc"
+               logger="Q2" realm="check-usage-limit-per-tcc" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckPreviousReverse"
+               logger="Q2" realm="check-previous-reverse">
+   <property name="checkpoint"   value="check-previous-reverse" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity">
+   <property name="checkpoint"  value="check-velocity" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &authorization;
+  &authorization_esor;
+
+  <participant class="org.jpos.jcard.sm.PrepareICCResponse" logger="Q2" realm="response-icc"/>
+ </group>
+
+ <group name="financial">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="2,6,14,15,17,21,22,23,24,26,32,37,42,43,46,52,53,60,63,62,111,112,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CheckPreviousReverse"
+               logger="Q2" realm="check-previous-reverse" />
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity" />
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &financial;
+  &financial_esor;
+
+ </group>
+
+ <group name="refund">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="2,6,14,15,17,21,22,23,25,24,26,32,37,42,43,46,55,56,60,63,62,111,112,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity" />
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &refund;
+  &refund_esor;
+
+ </group>
+
+ <group name="financial-refund">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12,AMOUNT, PAN, 41" />
+   <property name="optional"  value="2,6,14,15,17,21,22,23,24,25,26,32,37,42,43,46,60,63,62,111,112,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity" />
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &financial_refund;
+  &financial_refund_esor;
+
+ </group>
+
+ <group name="financial-deposit">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,21,22,23,24,26,32,37,42,43,46,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &financial_deposit;
+  &financial_deposit_esor;
+
+ </group>
+
+ <group name="reversal">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN,41" />
+   <property name="optional"  value="2,6,14,15,17,21,22,23,24,25,26,30,32,37,42,43,46,55,60,63,62,111,113,19,112,123,ORIGINAL_DATA_ELEMENTS,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="window" value="259200" /> <!-- change value only for testing porpuses -->
+   <property name="fields" value="stan, amount, currency, card, original-tx-timestamp" />
+   <property name="original-itc" value="100,200" />
+  </participant>
+  <participant class="org.jpos.jcard.GetPDCFormOriginal" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &reversal;
+  &reversal_esor;
+ </group>
+
+ <group name="oct-completion">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT,25,41" />
+   <property name="optional"  value="2,6,13,15,17,19,21,22,23,24,26,32,37,38,42,43,46,49,56,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="original-itc" value="100.26" />
+   <property name="window" value="${OCT_COMPLETION_WINDOW:2592000}" />
+   <property name="fields" value="card approvalnumber" />
+  </participant>
+  <participant class="org.jpos.jcard.CompletionBalanceAccount" logger="Q2" realm="completion-select-account">
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  &completion;
+  &completion_esor;
+ </group>
+
+ <group name="presentation">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN,38,41" />
+   <property name="optional"  value="6,15,17,21,22,23,24,25,26,32,37,42,43,46,55,60,63,62,93,100,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.MarkAsTrusted" />
+  <participant class="org.jpos.jcard.AdditionalAmountsResolver" logger="Q2" realm="additional-amounts-resolver">
+   <property name="checkpoint"   value="additional-amounts-resolver" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+   <property name="check-expired" value="false"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  <!--
+  TODO: El control de ciclo de vida de tarjetas debe ser diferente o no debemos hacerlo en absoluto?
+          ya que esto solo esta confirmando una transacción previamente hecha
+  -->
+  <!--
+  TODO: que hacer si una tarjeta ya fue cancelada y viene un presentación sin original? Como queda el plan de cuentas
+  -->
+  <participant class="org.jpos.jcard.HandleInterchangeFee" logger="Q2" realm="handle-interchange-fee"/>
+  <participant class="org.jpos.jcard.PresentationSwitch" logger="Q2" realm="presentation-switch">
+   <property name="with-original" value="presentation-with-original"/>
+   <property name="without-original" value="presentation-without-original"/>
+  </participant>
+ </group>
+
+ <group name="presentation-with-original">
+  <!--  presentation with original-->
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="find-original">
+   <property name="original-itc" value="100.00,100.01" />
+   <property name="window" value="${PRESENTATION_WINDOW:2592000}" />
+   <property name="fields" value="card, approvalNumber, currency" />
+  </participant>
+  <participant class="org.jpos.jcard.ValidateEMVCryptogram" logger="Q2" realm="register-cryptogram-changes"/>
+  <participant class="org.jpos.jcard.PresentationBalanceAccount" logger="Q2" realm="presentation-select-acc" />
+  <participant class="org.jpos.jcard.HandleMultipleRecordsClearing" logger="Q2" realm="clearing-multiple-records"/>
+  <participant class="org.jpos.jcard.HandlePresentationAdjust" logger="Q2" realm="handle-presentation-adjust"/>
+  <participant class="org.jpos.jcard.Presentation" logger="Q2" realm="presentation"/>
+ </group>
+
+ <group name="presentation-without-original">
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convert-currency-pwo">
+   <property name="checkpoint" value="convert-currency"/>
+  </participant>
+  <participant class="org.jpos.jcard.PresentationBalanceAccount" logger="Q2" realm="presentation-select-acc" />
+  <!--  presentation without original-->
+  <participant class="org.jpos.jcard.PresentationWithoutOriginal" logger="Q2" realm="presentation-wo">
+   <property name="debit-to-cardholder" value="true"/>
+  </participant>
+ </group>
+
+ <group name="refund-presentation">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12,AMOUNT,PAN,41" />
+   <property name="optional"  value="6,15,17,21,22,23,24,25,26,32,37,38,42,43,46,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.MarkAsTrusted" />
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+   <property name="check-expired" value="false"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.HandleInterchangeFee" logger="Q2" realm="handle-interchange-fee"/>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  <participant class="org.jpos.jcard.PresentationSwitch" logger="Q2" realm="presentation-switch">
+   <property name="with-original" value="refund-presentation-with-original"/>
+   <property name="without-original" value="refund-presentation-without-original"/>
+  </participant>
+ </group>
+
+ <group name="refund-presentation-without-original">
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convert-currency-pwo">
+   <property name="checkpoint" value="convert-currency"/>
+  </participant>
+  <participant class="org.jpos.jcard.PresentationBalanceAccount" logger="Q2" realm="presentation-select-acc" />
+  <!--  presentation without original-->
+  <participant class="org.jpos.jcard.PresentationWithoutOriginal" logger="Q2" realm="presentation-wo">
+   <property name="debit-to-cardholder" value="false"/>
+  </participant>
+ </group>
+
+ <group name="refund-presentation-with-original">
+  <!--  presentation with original-->
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="find-original">
+   <property name="original-itc" value="100.20,100.26" />
+   <property name="window" value="2592000" />
+   <property name="fields" value="card, approvalNumber, currency" />
+  </participant>
+  <participant class="org.jpos.jcard.PresentationBalanceAccount" logger="Q2" realm="presentation-select-acc" />
+  <participant class="org.jpos.jcard.HandleMultipleRecordsClearing" logger="Q2" realm="clearing-multiple-records"/>
+  <participant class="org.jpos.jcard.HandlePresentationAdjust" logger="Q2" realm="handle-presentation-adjust"/>
+  <participant class="org.jpos.jcard.HandleFastFunds" logger="Q2" realm="handle-fast-funds"/>
+  <participant class="org.jpos.jcard.Presentation" logger="Q2" realm="presentation"/>
+ </group>
+
+ <group name="force-post">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12,AMOUNT, PAN,25,41" />
+   <property name="optional"  value="6,15,17,21,22,23,24,26,32,37,38,39,42,43,46,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+   <property name="check-expired" value="false"/>
+  </participant>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &force_post;
+  <!--  TODO implement for ESOR if necessary-->
+ </group>
+
+ <group name="refund-force-post">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN,25,41" />
+   <property name="optional"  value="6,15,17,21,22,23,24,26,32,37,38,39,42,43,46,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+   <property name="check-expired" value="false"/>
+  </participant>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &force_post_refund;
+  <!--  TODO implement for ESOR if necessary-->
+ </group>
+
+ <group name="transfer">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,21,22,24,26,32,37,42,43,46,60,63,62,111,113" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account" />
+  <participant class="org.jpos.jcard.CheckPreviousReverse"
+               logger="Q2" realm="check-previous-reverse" />
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity" />
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  <participant class="org.jpos.jcard.Transfer"
+               logger="Q2" realm="transfer" />
+  <participant class="org.jpos.jcard.ComputeBalances"
+               logger="Q2" realm="compute-balances">
+   <property name="checkpoint" value="compute-balances" />
+  </participant>
+ </group>
+
+ <group name="account-to-account-transfer">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12,33, AMOUNT, 41, 102, 103" />
+   <property name="optional"  value="6,15,17,21,22,24,26,32,37,42,43,46,60,63,62,111,113" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckIssuer"
+               logger="Q2" realm="checkissuer" />
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.SelectGLAccounts"
+               logger="Q2" realm="select-account" />
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  <participant class="org.jpos.jcard.Transfer" logger="Q2" realm="transfer">
+   <property name="check-source-balance" value="false" />
+  </participant>
+ </group>
+
+ <group name="account-to-account-transfer-repeat">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12,33, AMOUNT, 41, 102, 103" />
+   <property name="optional"  value="6,15,17,21,22,24,26,32,37,42,43,46,60,63,62,111,113" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckIssuer"
+               logger="Q2" realm="checkissuer" />
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.SelectGLAccounts"
+               logger="Q2" realm="select-account" />
+  <participant class="org.jpos.jcard.CheckRetransmission"
+               logger="Q2" realm="check-retransmission" />
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  <participant class="org.jpos.jcard.Transfer" logger="Q2" realm="transfer">
+   <property name="check-source-balance" value="false" />
+  </participant>
+ </group>
+
+ <group name="purchase-void">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41, ORIGINAL_DATA_ELEMENTS" />
+   <property name="optional"  value="6,15,17,21,22,23,24,26,30,32,37,42,43,46,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="window" value="259200" />
+   <property name="fields" value="stan, amount, currency, card, original-tx-timestamp" />
+   <property name="original-itc" value="200.00" />
+  </participant>
+  <participant class="org.jpos.jcard.GetPDCFormOriginal" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  &void;
+  &void_esor;
+ </group>
+
+ <group name="auth-void">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41, ORIGINAL_DATA_ELEMENTS" />
+   <property name="optional"  value="6,15,17,21,22,23,24,26,30,32,37,42,43,46,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="window" value="259200" />
+   <property name="fields" value="stan, amount, currency, card, original-tx-timestamp" />
+   <property name="original-itc" value="100.00" />
+  </participant>
+  <participant class="org.jpos.jcard.GetPDCFormOriginal" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.Void" logger="Q2" realm="void" />
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  &void;
+  &void_esor;
+ </group>
+
+ <group name="auth-adjustment">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41, ORIGINAL_DATA_ELEMENTS" />
+   <property name="optional"  value="6,15,17,21,22,23,24,26,30,32,37,42,43,46,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="window" value="259200" />
+   <property name="fields" value="stan, currency, card" />
+   <property name="original-itc" value="100.00" />
+  </participant>
+  <participant class="org.jpos.jcard.GetPDCFormOriginal" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CheckPreviousReverse"
+               logger="Q2" realm="check-previous-reverse">
+   <property name="checkpoint"   value="check-previous-reverse" />
+  </participant>
+  <!-- TODO: need to decide what to do here on adjustment transactions
+  <participant class="org.jpos.jcard.CheckVelocity"
+   logger="Q2" realm="checkvelocity">
+   <property name="checkpoint"  value="check-velocity" />
+  </participant>
+  -->
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+
+  &authorization;
+  &authorization_esor;
+ </group>
+
+ <group name="close">
+  <participant class="org.jpos.transaction.Close" logger="Q2" realm="close">
+   <property name="checkpoint" value="close" />
+  </participant>
+ </group>
+
+ <group name="refund-void">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41, ORIGINAL_DATA_ELEMENTS" />
+   <property name="optional"  value="6,15,17,21,22,23,24,26,30,32,37,42,43,46,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="window" value="259200" />
+   <property name="fields" value="stan, amount, currency, card, original-tx-timestamp" />
+   <property name="original-itc" value="100.20" />
+  </participant>
+  <participant class="org.jpos.jcard.GetPDCFormOriginal" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  <participant class="org.jpos.jcard.Void" logger="Q2" realm="void" />
+
+  &void;
+  &void_esor;
+ </group>
+
+ <group name="financial-refund-void">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41, ORIGINAL_DATA_ELEMENTS" />
+   <property name="optional"  value="6,15,17,21,22,23,24,26,32,37,42,43,46,60,63,62,111,113,200" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCard"
+               logger="Q2" realm="checkcard">
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal"
+               logger="Q2" realm="checkterminal" />
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer" />
+  <participant class="org.jpos.jcard.FindOriginal" logger="Q2" realm="findoriginal">
+   <property name="window" value="259200" />
+   <property name="fields" value="stan, amount, currency, card, original-tx-timestamp" />
+   <property name="original-itc" value="200.20" />
+  </participant>
+  <participant class="org.jpos.jcard.GetPDCFormOriginal" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.TransactionBorderResolver"
+               logger="Q2" realm="determine-transaction-border">
+  </participant>
+  <participant class="org.jpos.jcard.gatekeeper.Gatekeeper" logger="Q2" realm="gatekeeper" />
+  <participant class="org.jpos.jcard.Void" logger="Q2" realm="void" />
+
+  &void;
+  &void_esor;
+ </group>
+
+ <group name="prepareresponse">
+  <participant class="org.jpos.jcard.CheckFailedTransaction" logger="Q2"
+               realm="check-failed-transaction" />
+  <participant class="org.jpos.jcard.PrepareResponse" logger="Q2" realm="prepareresponse">
+   <property name="locale" value="JCARD" />
+   <property name="checkpoint"   value="prepare-response" />
+  </participant>
+  <participant class="org.jpos.jcard.GenerateDomesticIssuerInstallments" logger="Q2" realm="GenerateDomesticIssuerInstallments" />
+ </group>
+
+ <group name="logit">
+  <participant class="org.jpos.jcard.LogIt" logger="Q2"
+               realm="log-it">
+   <property name="checkpoint"   value="log-response" />
+  </participant>
+ </group>
+
+ <group name="sendresponse">
+  <participant class="org.jpos.jcard.SendResponse" logger="Q2" realm="sendresponse" />
+  <participant class="org.jpos.jcard.CheckRcToAlert" logger="Q2" realm="checkrctoalert" />
+  <participant class="org.jpos.notification.txnmgr.integration.AlertParticipant" logger="Q2" realm="alerts"/>
+ </group>
+
+ <group name="pending-credit">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,18,21,22,23,24,26,32,37,42,43,46,49,55,56,60,63,62,111,113,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckInstallments" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="200.03" />
+  </participant>
+  <participant class="org.jpos.jcard.sm.CheckICC" logger="Q2" realm="check-icc"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVAmount" logger="Q2" realm="check-emv-amount" enabled="${CHECK_EMV_AMOUNT:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVCountry" logger="Q2" realm="check-emv-country" enabled="${CHECK_EMV_COUNTRY:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVTimestamp" enabled="${CHECK_EMV_TIMESTAMP:true}" logger="Q2" realm="check-emv-timestamp"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTransactionType" enabled="${CHECK_EMV_TXN_TYPE:true}" logger="Q2" realm="check-emv-txn-type"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTVR" enabled="${CHECK_EMV_TVR:true}" logger="Q2" realm="check-emv-tvr"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVRandomNumber" logger="Q2" realm="check-emv-random-number" enabled="${CHECK_EMV_RANDOM_NUMBER:true}" />
+  <participant class="org.jpos.jcard.sm.CheckCVV2" logger="Q2" realm="check-cvv2"/>
+  <participant class="org.jpos.jcard.CheckCAVV" logger="Q2" realm="check-cavv" />
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckComplianceValidations" logger="Q2" realm="check-compliance-validations">
+   <property name="check_cvv2_for_ecommerce" value="${jcard_check_cvv2_for_ecommerce_transactions:true}"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal">
+   <property name="checkpoint"   value="check-terminal" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckDuplicate">
+   <property name="check-duplicate" value="true" />
+   <property name="check-rrn" value="true" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint"   value="check-acquirer" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+
+  &pending_credit;
+  &pending_credit_esor;
+  <participant class="org.jpos.jcard.sm.PrepareICCResponse" logger="Q2" realm="response-icc"/>
+ </group>
+
+ <group name="customer-identification">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,18,21,22,24,26,32,37,42,43,46,49,60,63,62,111,113,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.sm.CheckCVV2" logger="Q2" realm="check-cvv2"/>
+  <participant class="org.jpos.jcard.CheckCAVV" logger="Q2" realm="check-cavv" />
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint"   value="check-acquirer" />
+  </participant>
+  <participant class="org.jpos.jcard.ValidateCustomerRelatedData" logger="Q2" realm="validate-customer-data"/>
+ </group>
+
+ <group name="visa-direct-aft">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,18,21,22,23,24,26,32,37,42,43,46,49,52,54,55,60,63,62,111,113,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+
+  <participant class="org.jpos.jcard.CheckInstallments" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="200.03" />
+  </participant>
+
+  <participant class="org.jpos.jcard.CheckCAVV" logger="Q2" realm="check-cavv" />
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal">
+   <property name="checkpoint"   value="check-terminal" />
+  </participant>
+  <!--look for retransmission-->
+  <participant class="org.jpos.jcard.CheckOriginalTransaction" logger="Q2" realm="CheckOriginalTransaction">
+   <property name="fail-on-missing"   value="false" />
+  </participant>
+  <participant class="org.jpos.jcard.ValidateRetransmission" logger="Q2" realm="validate-retransmission" />
+  <!--look for retansmission-->
+  <participant class="org.jpos.jcard.CheckDuplicate">
+   <property name="check-duplicate" value="true" />
+   <property name="check-rrn" value="true" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint"   value="check-acquirer" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckPreviousReverse"
+               logger="Q2" realm="check-previous-reverse">
+   <property name="checkpoint"   value="check-previous-reverse" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity">
+   <property name="checkpoint"  value="check-velocity" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCanPartialAuthorization"
+               logger="Q2" realm="check-can-partial-authorization">
+   <property name="checkpoint"   value="check-can-partial-authorization" />
+  </participant>
+  <!--  TODO ADD support to partial authorization for international transactions-->
+
+  &authorization;
+  &authorization_esor;
+ </group>
+ <group name="visa-direct-oct">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,18,21,22,23,24,26,32,37,42,43,46,49,60,63,62,111,113,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckInstallments" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="200.03" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCAVV" logger="Q2" realm="check-cavv" />
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.SaveTCC"
+               logger="Q2" realm="save-tcc" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.ValidateOCTBusinessIdentifier" logger="Q2" realm="ValidOCTBAI">
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal">
+   <property name="checkpoint"   value="check-terminal" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckDuplicate">
+   <property name="check-duplicate" value="true" />
+   <property name="check-rrn" value="true" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint"   value="check-acquirer" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerChannel" logger="Q2" realm="check-channel-usage-limit"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerMcc" logger="Q2" realm="check-usage-limit-mcc"/>
+  <participant class="org.jpos.jcard.CheckUsageLimitPerCountry"
+               logger="Q2" realm="check-usage-limit-per-country" />
+  <participant class="org.jpos.jcard.CheckUsageLimitPerTcc"
+               logger="Q2" realm="check-usage-limit-per-tcc" />
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+
+  &oct;
+  &oct_esor;
+ </group>
+
+ <group name="prepaid-custom">
+  <participant class="org.jpos.jcard.CheckFields" logger="Q2" realm="CheckRequiredFields">
+   <property name="mandatory" value="PCODE,7,11,12, AMOUNT, PAN, 41" />
+   <property name="optional"  value="6,15,17,18,21,22,23,24,26,32,37,42,43,46,49,52,54,55,60,63,62,111,113,2,14,52,53,112,45,126,200,25,123" />
+  </participant>
+  <participant class="org.jpos.jcard.SelectAmount" logger="Q2" realm="select-amount">
+  </participant>
+  <participant class="org.jpos.jcard.CreateTranLog" logger="Q2"
+               realm="create-tranlog">
+   <property name="capture-date" value="capture-date" />
+   <property name="checkpoint"   value="create-tranlog" />
+   <property name="node"         value="01" />
+  </participant>
+
+  <participant class="org.jpos.jcard.CheckInstallments" logger="Q2" realm="CheckInstallments">
+   <property name="valid" value="200.03" />
+  </participant>
+  <participant class="org.jpos.jcard.sm.CheckICC" logger="Q2" realm="check-icc"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVAmount" logger="Q2" realm="check-emv-amount" enabled="${CHECK_EMV_AMOUNT:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVCountry" logger="Q2" realm="check-emv-country" enabled="${CHECK_EMV_COUNTRY:true}" />
+  <participant class="org.jpos.jcard.sm.CheckEMVTimestamp" enabled="${CHECK_EMV_TIMESTAMP:true}" logger="Q2" realm="check-emv-timestamp"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTransactionType" enabled="${CHECK_EMV_TXN_TYPE:true}" logger="Q2" realm="check-emv-txn-type"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVTVR" enabled="${CHECK_EMV_TVR:true}" logger="Q2" realm="check-emv-tvr"/>
+  <participant class="org.jpos.jcard.sm.CheckEMVRandomNumber" logger="Q2" realm="check-emv-random-number" enabled="${CHECK_EMV_RANDOM_NUMBER:true}" />
+  <participant class="org.jpos.jcard.sm.CheckCVV2" logger="Q2" realm="check-cvv2"/>
+  <participant class="org.jpos.jcard.CheckCAVV" logger="Q2" realm="check-cavv" />
+  <participant class="org.jpos.jcard.CheckCard" logger="Q2" realm="checkcard">
+   <property name="checkpoint" value="check-card"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckMaxRiskVisa" logger="Q2" realm="checkMaxRisk" />
+  <participant class="org.jpos.jcard.cardlifecycle.ClassifyTransaction" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckCardLifecycleState" logger="Q2" realm="check-card-lifecycle-state"/>
+  <participant class="org.jpos.jcard.CheckComplianceValidations" logger="Q2" realm="check-compliance-validations">
+   <property name="check_cvv2_for_ecommerce" value="${jcard_check_cvv2_for_ecommerce_transactions:true}"/>
+  </participant>
+  <participant class="org.jpos.jcard.CheckPIN" logger="Q2" realm="check-pin">
+   <property name="checkpoint"   value="check-pin" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckTerminal" logger="Q2" realm="checkterminal">
+   <property name="checkpoint"   value="check-terminal" />
+  </participant>
+  <!--look for retransmission-->
+  <participant class="org.jpos.jcard.CheckOriginalTransaction" logger="Q2" realm="CheckOriginalTransaction">
+   <property name="fail-on-missing"   value="false" />
+  </participant>
+  <participant class="org.jpos.jcard.ValidateRetransmission" logger="Q2" realm="validate-retransmission" />
+  <!--look for retansmission-->
+  <participant class="org.jpos.jcard.CheckDuplicate">
+   <property name="check-duplicate" value="true" />
+   <property name="check-rrn" value="true" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckAcquirer"
+               logger="Q2" realm="checkacquirer">
+   <property name="checkpoint"   value="check-acquirer" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckMinPurchaseAmountForCashback"
+               logger="Q2" realm="check-cashback-concession"/>
+  <participant class="org.jpos.jcard.CheckCashbackLimit"
+               logger="Q2" realm="check-cashback-limit"/>
+  <participant class="org.jpos.jcard.SelectAccount"
+               logger="Q2" realm="select-account">
+   <property name="checkpoint"   value="select-account" />
+  </participant>
+  <participant class="org.jpos.jcard.TransactionBorderResolver" logger="Q2"
+               realm="determine-transaction-border">
+   <property name="checkpoint" value="determine-txn-border" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCashbackAmount" logger="Q2" realm="check-cashback-amount"/>
+  <participant class="org.jpos.jcard.CheckInternationalCashback"
+               logger="Q2" realm="check-international-cashback" enabled="false"/>
+  <participant class="org.jpos.jcard.CurrencyConverter" logger="Q2" realm="convery-currency">
+   <property name="checkpoint" value="convert-currency" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckPreviousReverse"
+               logger="Q2" realm="check-previous-reverse">
+   <property name="checkpoint"   value="check-previous-reverse" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckVelocity"
+               logger="Q2" realm="checkvelocity">
+   <property name="checkpoint"  value="check-velocity" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckCanPartialAuthorization"
+               logger="Q2" realm="check-can-partial-authorization">
+   <property name="checkpoint"   value="check-can-partial-authorization" />
+  </participant>
+  <participant class="org.jpos.jcard.CheckAmountLoad" logger="Q2" realm="check-amount-load"/>
+  <participant class="org.jpos.jcard.Refund" logger="Q2" realm="refund" />
+  <participant class="org.jpos.jcard.ComputeBalances" logger="Q2" realm="compute-balances">
+   <property name="checkpoint" value="compute-balances" />
+  </participant>
+  <participant class="org.jpos.jcard.sm.PrepareICCResponse" logger="Q2" realm="response-icc"/>
+ </group>
+
+ <frozen-handler>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.DB"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.CardProduct"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.TranLog"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.security.SimpleKeyFile"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.hibernate.Criteria"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.CardHolder"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.Card"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.gl.Journal"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.Issuer"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.gl.GLSession"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.ee.Acquirer"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="org.jpos.gl.FinalAccount"/>
+  <!-- Here we use the default object serializer (empty) for the aws xray objects -->
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.strategy.ContextMissingStrategy"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.strategy.PrioritizationStrategy"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.internal.IdGenerator"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.contexts.ResolverChain"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.AWSXRayRecorder"/>
+  <serializer class="org.jpos.util.ObjectJacksonSerializer" for="com.amazonaws.xray.entities.Entity"/>
+ </frozen-handler>
+
+</txnmgr>

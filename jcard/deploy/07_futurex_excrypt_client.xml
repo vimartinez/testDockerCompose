@@ -1,0 +1,10 @@
+<qbean name="futurex-excrypt-client" class="org.jpos.jcard.sm.client.FuturexExcryptClient"
+       logger="${HSM_CLIENT_LOGGER:Q2}">
+    <property name="shouldUseSSM" value="${SHOULD_USE_SSM:false}"/>
+    <property name="host" value="${HSM_HOST}"/>
+    <property name="port" value="${HSM_PORT}"/>
+    <property name="pass" value="${HSM_PASS}"/>
+    <property name="cert-path" value="${HSM_CERT_BASE_PATH}/${HSM_CERT_FILE_NAME}"/>
+    <!-- Low level tracing should not be used in production systems unless required for troubleshooting-->
+    <property name="trace" value="${ACTIVE_HSM_TRACE:false}" />
+</qbean>
