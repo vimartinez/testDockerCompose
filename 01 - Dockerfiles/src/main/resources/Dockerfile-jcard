@@ -1,0 +1,8 @@
+FROM amazoncorretto:11
+WORKDIR etc
+RUN yum -y install git
+RUN git clone https://github.com/vimartinez/testDockerCompose.git
+RUN chmod -R 777 testDockerCompose
+#CMD ["ls -la"]
+CMD ["testDockerCompose/jcard/bin/q2"]
+#CMD ["testDockerCompose/jpts-app/bin/q2"]
