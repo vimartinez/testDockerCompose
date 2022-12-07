@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.prisma.prepaidcard</groupId>
+		<artifactId>prepaidcard-parent-pom-java-library</artifactId>
+		<version>2.2.4</version>
+	</parent>
+	<groupId>com.prismamp</groupId>
+	<artifactId>prepaidcard-transactions-regresion-test</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>prepaidcard-transactions-regresion-test</name>
+	<description>prepaidcard-transactions-regresion-test</description>
+
+	<properties>
+		<java.version>11</java.version>
+		<testcontainers.version>1.17.6</testcontainers.version>
+		<jpos.version>2.1.8-SNAPSHOT</jpos.version>
+		<jpos.ee.version>2.2.9-SNAPSHOT</jpos.ee.version>
+		<prepaidcard.jpos.json.logging.version>1.1.0</prepaidcard.jpos.json.logging.version>
+		<ss_visa_server_host>localhost2</ss_visa_server_host>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jpos.ee/jposee-core -->
+		<dependency>
+			<groupId>org.jpos.ee</groupId>
+			<artifactId>jposee-core</artifactId>
+			<version>2.2.8</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jpos.ee/jposee-client-simulator -->
+		<dependency>
+			<groupId>org.jpos.ee</groupId>
+			<artifactId>jposee-client-simulator</artifactId>
+			<version>2.2.8</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jpos/jpos -->
+		<dependency>
+			<groupId>org.jpos</groupId>
+			<artifactId>jpos</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jpos.ee/jposee-client-simulator -->
+		<dependency>
+			<groupId>org.jpos.ee</groupId>
+			<artifactId>jposee-client-simulator</artifactId>
+			<version>2.2.8</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jpos.ee/jposee-cmf -->
+		<dependency>
+			<groupId>org.jpos.ee</groupId>
+			<artifactId>jposee-cmf</artifactId>
+			<version>2.2.8</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jpos</groupId>
+			<artifactId>junit_support</artifactId>
+			<version>1.14</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/resources/libs/sim-junit-1.14.0.jar</systemPath>
+		</dependency>
+<!--		<dependency>
+			<groupId>org.jpos</groupId>
+			<artifactId>cmf</artifactId>
+			<version>2.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/resources/libs/cmf-2.0.0-old.jar</systemPath>
+		</dependency>-->
+
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<!-- Import dependency management from Spring Boot -->
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>2.7.5</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>testcontainers-bom</artifactId>
+				<version>${testcontainers.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>jpos-maven</id>
+			<name>jpos-maven</name>
+			<url>http://jpos.org/maven</url>
+		</repository>
+		<!--        <repository>
+                    <id>m2repo</id>
+                    <name>m2repo</name>
+                    <url>http://jline.sourceforge.net/m2repo</url>
+                </repository>-->
+		<!--        <repository>
+                    <id>releases</id>
+                    <name>releases</name>
+                    <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+                </repository>-->
+		       <repository>
+                    <id>prepaidcard-repository</id>
+                    <name>Prepaid Card Repository</name>
+                    <url>http://nexus.dev.prismaprepaid.com/repository/maven-public/</url>
+                </repository>
+		<!--        <repository>
+                    <id>maven2</id>
+                    <name>maven2</name>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                </repository>-->
+	</repositories>
+
+</project>

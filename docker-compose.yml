@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+#  alpineECR:
+#    image: 464237939985.dkr.ecr.us-east-1.amazonaws.com/alpine:3.14
+
+  jpts-db:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=jpos
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=jpts_dev
+
+  jpts-flyway:
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://jpts-db:5432/jpts_dev -user=jpos -password=password -connectRetries=60 -X info migrate  info
+    volumes:
+      - ./src/main/resources/db/migration/jpts:/flyway/sql
+    depends_on:
+      - jpts-db
+      - jcard-db
+
+  jcard-db:
+    image: postgres:14
+    ports:
+      - "5433:5433"
+    environment:
+      - POSTGRES_USER=jpos
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=jcard_dev
+
+  jcard-flyway:
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://jcard-db:5432/jcard_dev -user=jpos -password=password -connectRetries=60 -X info migrate  info
+    environment:
+      - FLYWAY_PLACEHOLDERS_sorType=isor
+      - FLYWAY_PLACEHOLDERS_issuerName=default
+      - FLYWAY_PLACEHOLDERS_acquirerName=VISA
+    volumes:
+      - ./src/main/resources/db/migration/jcard:/flyway/sql
+    depends_on:
+      - jpts-db
+      - jcard-db
+
+  jcard:
+    image: sha256:eda1b94c837ed40a4ef3792efbe2b97e2fb8a517dfa10eefebe969bb84f3693a
+#    build:
+#      context: .
+#      dockerfile: src/main/resources/Dockerfile-jcard
+    ports:
+      - "19000:19000"
+      - "15000:15000"
+      - "9000:9000"
+    environment:
+      - AWS_XRAY_CONTEXT_MISSING=LOG_ERROR
+      - HSM_CERT_BASE_PATH=/cert
+      - HSM_CERT_FILE_NAME=futurex-excrypt.p12
+      - HSM_CVK=E055C1E301E79EEFA8855D11EE9DD3CE
+      - HSM_HOST=us01crypto01test.virtucrypt.com
+      - HSM_MDK=E47D18AB01991888442112932F80F2CC
+      - HSM_PASS=Pr1sm4.54
+      - HSM_PEK=29A4EB53A10B6815B0A57A21DE4D9A10
+      - HSM_PORT=6035
+      - HSM_PVKA=DEC6E4752F812CBC
+      - HSM_PVKB=5DAD9AE1DD310EA4
+      - JCARD_DB_HOST=jcard-db
+      - JCARD_DB_PORT=5432
+      - JCARD_DB_NAME=jcard_dev
+      - JCARD_DB_USER=jpos
+      - JCARD_DB_PASS=password
+      - JCARD_DEK_001_KEY=214125442A472D4A614E645267556B58703273357638792F423F4528482B4D62
+      - JCARD_ISSUER_NAME=XPERIENCE
+      - JPOS_ELK_HOST=https://vpc-prepaid-dev-e2nbrpzj5z2n723imfdm3hsboi.us-east-1.es.amazonaws.com
+      - JPOS_ELK_PASS=X*464jE7
+      - JPOS_ELK_USER=user_app
+      - SHOULD_USE_SSM=true
+      - USE_INTERNAL_SOR=true
+    volumes:
+      - ./src/main/resources/cert:/cert
+    depends_on:
+      - jcard-flyway
+
+  jpts:
+    #image: XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/jpts:latest
+    build:
+      context: .
+      dockerfile: src/main/resources/Dockerfile-jpts
+    ports:
+      - "15001:15001"
+    environment:
+      - AWS_XRAY_CONTEXT_MISSING=LOG_ERROR
+      - BIMO_HOST=jcard
+      - BIMO_PORT=9000
+      - JCARD_BIMO_REMOTE_PORT=19500
+      - JPOS_ELK_HOST=https://vpc-prepaid-dev-e2nbrpzj5z2n723imfdm3hsboi.us-east-1.es.amazonaws.com
+      - JPOS_ELK_PASS=X*464jE7
+      - JPOS_ELK_USER=user_app
+      - JPTS_DB_HOST=jpts-db
+      - JPTS_DB_PORT=5432
+      - JPTS_DB_NAME=jpts_dev
+      - JPTS_DB_USER=jpos
+      - JPTS_DB_PASS=password
+      - JPTS_SERVER_PORT=7777
+      - SHOULD_USE_SSM=true
+    depends_on:
+      - jcard
+      - jpts-flyway
+
+  ss-visa:
+    #image: XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/ssvisa:latest
+    build:
+      context: .
+      dockerfile: src/main/resources/Dockerfile-ssVisa
+    ports:
+      - "11000:11000"
+    environment:
+      - DB_CONN_URL=jdbc:postgresql://postgres-db:5432/jpts_dev
+      - JPTS_CMF_HOST=jpts
+      - AWS_XRAY_CONTEXT_MISSING=LOG_ERROR
+      - JPOS_ELK_HOST=https://vpc-prepaid-dev-e2nbrpzj5z2n723imfdm3hsboi.us-east-1.es.amazonaws.com
+      - JPOS_ELK_PASS=X*464jE7
+      - JPOS_ELK_USER=user_app
+      - JPTS_REMOTE_HOST=jpts
+      - JPTS_REMOTE_PORT=7777
+    depends_on:
+      -  jpts
+
